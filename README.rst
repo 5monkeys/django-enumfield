@@ -58,6 +58,7 @@ The Enum-class provides the possibility to use transition validation.
 These transitions state that a PersonStatus can only go to DEAD from ALIVE and to REANIMATED from DEAD.
 
 .. code:: python
+
     person = Person.objects.create(status=PersonStatus.ALIVE)
     try:
         person.status = PersonStatus.REANIMATED
