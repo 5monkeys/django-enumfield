@@ -76,7 +76,7 @@ setup(
     name="django-enumfield",
     version=version,
 
-    description="Description",
+    description="Custom Django field for using enumerations of named constants",
     long_description=codecs.open(
         os.path.join(
             os.path.dirname(__file__),
