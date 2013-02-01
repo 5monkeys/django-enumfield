@@ -3,6 +3,7 @@ from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
 from django_enumfield.db.fields import EnumField
 
+
 def translate(name):
     return smart_unicode(_(name.replace('_', ' ').lower())).title()
 
