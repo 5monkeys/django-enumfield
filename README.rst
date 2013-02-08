@@ -31,7 +31,7 @@ Create an Enum-class and pass it as first argument to the Django model EnumField
         WEISSBIER = 2
 
     class Beer(models.Model):
-        style = EnumField(BeerStyle, default=BeerStyle.LAGER)
+        style = enum.EnumField(BeerStyle, default=BeerStyle.LAGER)
 
 .. code:: python
 
@@ -56,7 +56,7 @@ The Enum-class provides the possibility to use transition validation.
         }
 
     class Person(models.Model):
-        status = EnumField(PersonStatus)
+        status = enum.EnumField(PersonStatus)
 
 These transitions state that a PersonStatus can only go to DEAD from ALIVE and to REANIMATED from DEAD.
 
