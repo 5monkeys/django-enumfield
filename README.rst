@@ -81,6 +81,6 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         FEMALE = 2
 
     class PersonForm(forms.Form)
-        gender = forms.ChoiceField(choices=GenderEnum.choices())
+        gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
 
 Rendering PersonForm in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
