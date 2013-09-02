@@ -10,3 +10,8 @@ install:
 script:
   - make flake8
   - tox
+
+notifications:
+          email:
+            - hannes@5monkeys.se
+
