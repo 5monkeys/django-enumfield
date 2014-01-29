@@ -62,6 +62,8 @@ class Enum(object):
         def __eq__(self, other):
             if other and isinstance(other, Enum.Value):
                 return self.value == other.value
+            elif isinstance(other, basestring):
+                return type(other)(self.value) == other
             else:
                 raise TypeError('Can not compare Enum with %s' % other.__class__.__name__)
 
