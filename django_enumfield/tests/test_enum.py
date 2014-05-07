@@ -120,4 +120,5 @@ class EnumTest(TestCase):
         self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE))
 
     def test_labels(self):
-        self.assertIsInstance(dict(LabelBeer.choices())[1].label, Promise)
+        self.assertIsInstance(dict(LabelBeer.choices())[0].label, (Promise, str))
+        self.assertIsInstance(dict(PersonStatus.choices())[0].label, (Promise, str))
