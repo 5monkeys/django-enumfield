@@ -2,10 +2,11 @@ from django.contrib.formtools.tests import DummyRequest
 from django.db import IntegrityError
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
+from django.utils.functional import Promise
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 from django_enumfield.exceptions import InvalidStatusOperationError
-from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, Beer, BeerStyle, BeerState
+from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, Beer, BeerStyle, BeerState, LabelBeer
 
 
 class EnumFieldTest(TestCase):
@@ -57,7 +58,7 @@ class EnumFieldTest(TestCase):
 
     def test_magic_model_properties(self):
         beer = Beer.objects.create(style=BeerStyle.WEISSBIER)
-        self.assertEqual(getattr(beer, 'get_style_display')(), 'Weissbier')
+        self.assertEqual(getattr(beer, 'get_style_display')(), 'WEISSBIER')
 
     def test_enum_field_del(self):
         lamp = Lamp.objects.create()
@@ -102,7 +103,6 @@ class EnumTest(TestCase):
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum.Value))
         self.assertTrue(isinstance(PersonStatus.get(u'ALIVE'), Enum.Value))
-        self.assertEqual(unicode(PersonStatus.get(PersonStatus.ALIVE)), PersonStatus.label(PersonStatus.ALIVE))
 
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(PersonStatus.items()))
@@ -118,3 +118,6 @@ class EnumTest(TestCase):
         self.assertTrue(PersonStatus.ALIVE == PersonStatus.ALIVE)
         self.assertFalse(PersonStatus.ALIVE == PersonStatus.DEAD)
         self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE))
+
+    def test_labels(self):
+        self.assertIsInstance(dict(LabelBeer.choices())[1].label, Promise)

@@ -17,9 +17,10 @@ class EnumType(type):
         """
         enum = super(EnumType, cls).__new__(cls, *args, **kwargs)
         attributes = filter(lambda (k, v): k.isupper(), enum.__dict__.iteritems())
+        labels = enum.__dict__.get('labels', {})
         enum.values = {}
         for attribute in attributes:
-            enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], enum)
+            enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], labels.get(attribute[1]), enum)
         return enum
 
 
@@ -43,20 +44,20 @@ class Enum(object):
         "label" is a translatable human readable version of "name"
         "enum_type" is the value defined for the class attribute
         """
-        def __init__(self, name, value, enum_type):
+        def __init__(self, name, value, label, enum_type):
             self.name = name
-            self.label = translate(name)
+            self.label = label or translate(name)
             self.value = value
             self.enum_type = enum_type
 
         def __unicode__(self):
-            return unicode(self.label)
+            return unicode(self.name).upper()
 
         def __str__(self):
-            return self.label
+            return self.name.upper()
 
         def __repr__(self):
-            return self.label
+            return self.name.upper()
 
         def __eq__(self, other):
             if other and isinstance(other, Enum.Value):
