@@ -1,11 +1,12 @@
 """
 Based entirely on Django's own ``setup.py``.
 """
-import codecs
 import os
 import sys
+from io import open
 from distutils.command.install_data import install_data
 from distutils.command.install import INSTALL_SCHEMES
+
 try:
     from setuptools import setup
 except ImportError:
@@ -25,6 +26,7 @@ class osx_install_data(install_data):
         # install_data class uses ('install_data', 'install_dir') instead.
         self.set_undefined_options('install', ('install_lib', 'install_dir'))
         install_data.finalize_options(self)
+
 
 if sys.platform == "darwin":
     cmdclasses = {'install_data': osx_install_data}
@@ -69,7 +71,6 @@ for dirpath, dirnames, filenames in os.walk(enum_dir):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-
 version = __import__('django_enumfield').__version__
 
 setup(
@@ -77,12 +78,13 @@ setup(
     version=version,
 
     description="Custom Django field for using enumerations of named constants",
-    long_description=codecs.open(
+    long_description=open(
         os.path.join(
             os.path.dirname(__file__),
             "README.rst"
-        )
+        ), encoding='utf-8'
     ).read(),
+
     author="Hannes Ljungberg",
     author_email="hannes@5monkeys.se",
     url="http://github.com/5monkeys/django-enumfield",
@@ -92,8 +94,8 @@ setup(
     license='MIT',
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
         'Framework :: Django',
         "Natural Language :: English",
         "Environment :: Web Environment",

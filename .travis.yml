@@ -13,6 +13,6 @@ script:
   - tox
 
 notifications:
-          email:
-            - hannes@5monkeys.se
+  email:
+    - hannes@5monkeys.se
 
