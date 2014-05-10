@@ -55,10 +55,10 @@ class Enum(six.with_metaclass(EnumType)):
             self.enum_type = enum_type
 
         def __str__(self):
-            return self.label
+            return six.u(self.label)
 
         def __repr__(self):
-            return self.label
+            return str(self.label)
 
         def __eq__(self, other):
             if other and isinstance(other, Enum.Value):
