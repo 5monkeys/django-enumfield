@@ -127,5 +127,3 @@ class EnumTest(TestCase):
         self.assertNotEqual(LabelBeer.name(LabelBeer.STELLA), LabelBeer.label(LabelBeer.STELLA))
         self.assertTrue(isinstance(LabelBeer.label(LabelBeer.STELLA), six.string_types))
         self.assertEqual(LabelBeer.label(LabelBeer.STELLA), six.text_type('Stella Artois'))
-
-

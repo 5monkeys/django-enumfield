@@ -1,7 +1,9 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
-from django.utils.translation import ugettext_lazy as _
+
 
 class LampState(Enum):
     OFF = 0

@@ -1,6 +1,5 @@
 import logging
 
-from django.utils.translation import ugettext_lazy as _
 import six
 from django.utils.encoding import python_2_unicode_compatible
 
@@ -11,14 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 class EnumType(type):
-    def __new__(mcs, *args, **kwargs):
-        """
-        Create enum values from all uppercase class attributes and store them in a dict on the Enum class.
-        """
-        enum = super(EnumType, mcs).__new__(mcs, *args, **kwargs)
-        attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]        
+    """ Custom metaclass for Enum type """
+
+    def __new__(mcs, *args):
+        """ Create enum values from all uppercase class attributes and store them in a dict on the Enum class."""
+        enum = super(EnumType, mcs).__new__(mcs, *args)
+        attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]
         labels = enum.__dict__.get('labels', {})
-        
+
         enum.values = {}
         for attribute in attributes:
             enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], labels.get(attribute[1]), enum)
@@ -26,20 +25,12 @@ class EnumType(type):
 
 
 class Enum(six.with_metaclass(EnumType)):
-    """
-    A container for holding and restoring enum values.
-    Usage:
-        class BeerStyle(Enum):
-            LAGER = 0
-            STOUT = 1
-            WEISSBIER = 2
-    It can also validate enum value transitions by defining the _transitions variable as a dict with transitions.
-    """
+    """ A container for holding and restoring enum values """
 
     @python_2_unicode_compatible
     class Value(object):
         """
-        A value represents a key value pair with a uppercase name and a integer value:
+        A value represents a key-value pair with a uppercase name and a integer value:
         GENDER = 1
         "name" is a upper case string representing the class attribute
         "label" is a translatable human readable version of "name"
@@ -68,37 +59,43 @@ class Enum(six.with_metaclass(EnumType)):
 
     @classmethod
     def choices(cls):
+        """ Choices for Enum
+        :return: List of tuples (<value>, <human-readable value>)
+        :rtype: list
         """
-        Returns a list of tuples with the value as first argument and the value container class as second argument.
-        """
-        return sorted(list(cls.values.items()), key=lambda x: x[0])
+        return sorted([(key, value) for key, value in cls.values.items()], key=lambda x: x[0])
 
     @classmethod
     def default(cls):
-        """
-        Returns default value, which is the first one by default.
-        Override this method if you need another default value.
+        """ Default Enum value. Override this method if you need another default value.
         Usage:
             IntegerField(choices=my_enum.choices(), default=my_enum.default(), ...
+        :return Default value, which is the first one by default.
+        :rtype: int
         """
         return cls.choices()[0][0]
 
     @classmethod
     def field(cls, **kwargs):
-        """
-        A shortcut for
+        """ A shortcut for field declaration
         Usage:
             class MyModelStatuses(Enum):
                 UNKNOWN = 0
+
             class MyModel(Model):
                 status = MyModelStatuses.field()
+
+        :param kwargs: Arguments passed in EnumField.__init__()
+        :rtype: EnumField
         """
         return EnumField(cls, **kwargs)
 
     @classmethod
     def get(cls, name_or_numeric):
-        """
-        Will return a Enum.Value matching the value argument.
+        """ Get Enum.Value object matching the value argument.
+        :param name_or_numeric: Integer value or attribute name
+        :type name_or_numeric: int or str
+        :rtype: Enum.Value
         """
         if isinstance(name_or_numeric, six.string_types):
             name_or_numeric = getattr(cls, name_or_numeric.upper())
@@ -107,36 +104,50 @@ class Enum(six.with_metaclass(EnumType)):
 
     @classmethod
     def name(cls, numeric):
-        """
-        Will return the uppercase name for the matching Enum.Value.
+        """ Get attribute name for the matching Enum.Value
+        :param numeric: Enum value
+        :type numeric: int
+        :return: Attribute name for value
+        :rtype: str
         """
         return cls.get(numeric).name
 
     @classmethod
     def label(cls, numeric):
-        """
-        Will return the human readable label for the matching Enum.Value.
+        """ Get human readable label for the matching Enum.Value.
+        :param numeric: Enum value
+        :type numeric: int
+        :return: label for value
+        :rtype: str or
         """
         return six.text_type(cls.get(numeric).label)
 
     @classmethod
     def items(cls):
         """
-        Will return a list of tuples consisting of every enum value in the form [('NAME', value), ...]
+        :return: List of tuples consisting of every enum value in the form [('NAME', value), ...]
+        :rtype: list
         """
-        items = [(value.name, key) for key, value in list(cls.values.items())]
+        items = [(value.name, key) for key, value in cls.values.items()]
         return sorted(items, key=lambda x: x[1])
 
     @classmethod
     def is_valid_transition(cls, from_value, to_value):
-        """
-        Will check if to_value is a valid transition from from_value. Returns true if it is a valid transition.
+        """ Will check if to_value is a valid transition from from_value. Returns true if it is a valid transition.
+        :param from_value: Start transition point
+        :param to_value: End transition point
+        :type from_value: int
+        :type to_value: int
+        :return: Success flag
+        :rtype: bool
         """
         return from_value == to_value or from_value in cls.transition_origins(to_value)
 
     @classmethod
     def transition_origins(cls, to_value):
-        """
-        Returns all values the to_value can make a transition from.
+        """ Returns all values the to_value can make a transition from.
+        :param to_value End transition point
+        :type to_value: int
+        :rtype: list
         """
         return cls._transitions[to_value]

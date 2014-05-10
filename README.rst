@@ -38,6 +38,18 @@ Create an Enum-class and pass it as first argument to the Django model EnumField
     Beer.objects.create(style=BeerStyle.STOUT)
     Beer.objects.filter(style=BeerStyle.STOUT)
 
+You can use your own labels for Enum items
+
+.. code:: python
+    class Animals(enum.Enum):
+        CAT = 1
+        DOG = 2
+
+        labels = {
+            CAT: 'Cat',
+            DOG: 'Dog'
+        }
+
 The Enum-class provides the possibility to use transition validation.
 
 .. code:: python
@@ -79,6 +91,11 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
     class GenderEnum(enum.Enum):
         MALE = 1
         FEMALE = 2
+
+        labels = {
+            MALE: 'Male',
+            FEMALE: 'Female',
+        }
 
     class PersonForm(forms.Form)
         gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
