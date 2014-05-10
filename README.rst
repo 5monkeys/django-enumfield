@@ -41,6 +41,7 @@ Create an Enum-class and pass it as first argument to the Django model EnumField
 You can use your own labels for Enum items
 
 .. code:: python
+
     class Animals(enum.Enum):
         CAT = 1
         DOG = 2
