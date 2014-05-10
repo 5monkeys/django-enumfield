@@ -4,7 +4,6 @@ from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
 import six
 
-from django.utils.functional import Promise
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 from django_enumfield.exceptions import InvalidStatusOperationError
@@ -98,7 +97,7 @@ class EnumFieldTest(TestCase):
 
 class EnumTest(TestCase):
     def test_label(self):
-        self.assertEqual(PersonStatus.label(PersonStatus.ALIVE), six.text_type('Alive'))
+        self.assertEqual(PersonStatus.label(PersonStatus.ALIVE), six.text_type('ALIVE'))
 
     def test_name(self):
         self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.text_type('ALIVE'))
@@ -124,5 +123,9 @@ class EnumTest(TestCase):
         self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE))
 
     def test_labels(self):
-        self.assertIsInstance(dict(LabelBeer.choices())[0].label, (Promise, str))
-        self.assertIsInstance(dict(PersonStatus.choices())[0].label, (Promise, str))
+        self.assertEqual(LabelBeer.name(LabelBeer.JUPILER), LabelBeer.label(LabelBeer.JUPILER))
+        self.assertNotEqual(LabelBeer.name(LabelBeer.STELLA), LabelBeer.label(LabelBeer.STELLA))
+        self.assertTrue(isinstance(LabelBeer.label(LabelBeer.STELLA), six.string_types))
+        self.assertEqual(LabelBeer.label(LabelBeer.STELLA), six.text_type('Stella Artois'))
+
+

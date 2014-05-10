@@ -7,10 +7,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django_enumfield.db.fields import EnumField
 
 
-def translate(name):
-    return _(name.replace('_', ' ').lower().title())
-
-
 logger = logging.getLogger(__name__)
 
 
@@ -50,17 +46,17 @@ class Enum(six.with_metaclass(EnumType)):
         "enum_type" is the value defined for the class attribute
         """
 
-        def __init__(self, name, value, enum_type):
+        def __init__(self, name, value, label, enum_type):
             self.name = name
-            self.label = translate(name)
             self.value = value
+            self.label = label or name
             self.enum_type = enum_type
 
         def __str__(self):
             return six.text_type(self.label)
 
         def __repr__(self):
-            return str(self.label)
+            return self.name
 
         def __eq__(self, other):
             if other and isinstance(other, Enum.Value):
@@ -121,7 +117,7 @@ class Enum(six.with_metaclass(EnumType)):
         """
         Will return the human readable label for the matching Enum.Value.
         """
-        return translate(cls.get(numeric).label)
+        return six.text_type(cls.get(numeric).label)
 
     @classmethod
     def items(cls):
