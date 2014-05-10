@@ -1,28 +1,30 @@
 import logging
+
 from django.utils.translation import ugettext_lazy as _
-from django_enumfield.db.fields import EnumField
 import six
 from django.utils.encoding import python_2_unicode_compatible
 
+from django_enumfield.db.fields import EnumField
+
+
 def translate(name):
     return _(name.replace('_', ' ').lower().title())
+
 
 logger = logging.getLogger(__name__)
 
 
 class EnumType(type):
-
-    def __new__(cls, *args, **kwargs):
+    def __new__(mcs, *args, **kwargs):
         """
         Create enum values from all uppercase class attributes and store them in a dict on the Enum class.
         """
-        enum = super(EnumType, cls).__new__(cls, *args, **kwargs)
+        enum = super(EnumType, mcs).__new__(mcs, *args, **kwargs)
         attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]
         enum.values = {}
         for attribute in attributes:
             enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], enum)
         return enum
-
 
 
 class Enum(six.with_metaclass(EnumType)):
@@ -45,6 +47,7 @@ class Enum(six.with_metaclass(EnumType)):
         "label" is a translatable human readable version of "name"
         "enum_type" is the value defined for the class attribute
         """
+
         def __init__(self, name, value, enum_type):
             self.name = name
             self.label = translate(name)

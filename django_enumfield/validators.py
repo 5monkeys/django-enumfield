@@ -22,6 +22,6 @@ def validate_available_choice(enum, to_value):
     """
     Validate that to_value is defined as a value in enum.
     """
-    if to_value is not None and not to_value in list(dict(enum.choices()).keys()):
+    if to_value is not None and to_value not in list(dict(enum.choices()).keys()):
         message = _(six.u('Select a valid choice. {value} is not one of the available choices.'))
         raise InvalidStatusOperationError(message.format(value=to_value))

@@ -1,7 +1,9 @@
 from django.db import models
 from django import forms
-from django_enumfield import validators
 import six
+
+from django_enumfield import validators
+
 
 class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
     """ EnumField is a convenience field to automatically handle validation of transitions
@@ -20,7 +22,7 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
         self.enum = enum
         models.IntegerField.__init__(self, *args, **kwargs)
 
-    def contribute_to_class(self, cls, name):
+    def contribute_to_class(self, cls, name, virtual_only=False):
         super(EnumField, self).contribute_to_class(cls, name)
         models.signals.class_prepared.connect(self._setup_validation, sender=cls)
 
@@ -70,6 +72,7 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
         """Returns a suitable description of this field for South."""
         # We'll just introspect ourselves, since we inherit.
         from south.modelsinspector import introspector
+
         field_class = "django.db.models.fields.IntegerField"
         args, kwargs = introspector(self)
         # That's our definition!
