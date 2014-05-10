@@ -1,4 +1,6 @@
 from django.utils.translation import gettext as _
+import six
+
 from django_enumfield.exceptions import InvalidStatusOperationError
 
 
@@ -8,15 +10,18 @@ def validate_valid_transition(enum, from_value, to_value):
     """
     validate_available_choice(enum, to_value)
     if hasattr(enum, '_transitions') and not enum.is_valid_transition(from_value, to_value):
-        message = _('%(enum)s can not go from "%(from)s" to "%(to)s"' % {'enum': enum.__name__,
-                                                                         'from': enum.name(from_value),
-                                                                         'to': enum.name(to_value) or to_value})
-        raise InvalidStatusOperationError(message)
+        message = _(six.u('{enum} can not go from "{from_value}" to "{to_value}"'))
+        raise InvalidStatusOperationError(message.format(
+            enum=enum.__name__,
+            from_value=enum.name(from_value),
+            to_value=enum.name(to_value) or to_value
+        ))
 
 
 def validate_available_choice(enum, to_value):
     """
     Validate that to_value is defined as a value in enum.
     """
-    if to_value is not None and not to_value in dict(enum.choices()).keys():
-        raise InvalidStatusOperationError(_(u'Select a valid choice. %(value)s is not one of the available choices.') % {'value': to_value})
+    if to_value is not None and not to_value in list(dict(enum.choices()).keys()):
+        message = _(six.u('Select a valid choice. {value} is not one of the available choices.'))
+        raise InvalidStatusOperationError(message.format(value=to_value))

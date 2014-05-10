@@ -1,14 +1,13 @@
 from django.db import models
 from django import forms
 from django_enumfield import validators
+import six
 
-
-class EnumField(models.IntegerField):
+class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
     """ EnumField is a convenience field to automatically handle validation of transitions
         between Enum values and set field choices from the enum.
         EnumField(MyEnum, default=MyEnum.INITIAL)
     """
-    __metaclass__ = models.SubfieldBase
 
     def __init__(self, enum, *args, **kwargs):
         default = kwargs.get('default')

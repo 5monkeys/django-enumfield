@@ -1,7 +1,8 @@
 import logging
 from django.utils.translation import ugettext_lazy as _
 from django_enumfield.db.fields import EnumField
-
+import six
+from django.utils.encoding import python_2_unicode_compatible
 
 def translate(name):
     return _(name.replace('_', ' ').lower().title())
@@ -16,14 +17,15 @@ class EnumType(type):
         Create enum values from all uppercase class attributes and store them in a dict on the Enum class.
         """
         enum = super(EnumType, cls).__new__(cls, *args, **kwargs)
-        attributes = filter(lambda (k, v): k.isupper(), enum.__dict__.iteritems())
+        attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]
         enum.values = {}
         for attribute in attributes:
             enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], enum)
         return enum
 
 
-class Enum(object):
+@python_2_unicode_compatible
+class Enum(six.with_metaclass(EnumType)):
     """
     A container for holding and restoring enum values.
     Usage:
@@ -33,7 +35,6 @@ class Enum(object):
             WEISSBIER = 2
     It can also validate enum value transitions by defining the _transitions variable as a dict with transitions.
     """
-    __metaclass__ = EnumType
 
     class Value(object):
         """
@@ -49,9 +50,6 @@ class Enum(object):
             self.value = value
             self.enum_type = enum_type
 
-        def __unicode__(self):
-            return unicode(self.label)
-
         def __str__(self):
             return self.label
 
@@ -61,7 +59,7 @@ class Enum(object):
         def __eq__(self, other):
             if other and isinstance(other, Enum.Value):
                 return self.value == other.value
-            elif isinstance(other, basestring):
+            elif isinstance(other, six.string_types):
                 return type(other)(self.value) == other
             else:
                 raise TypeError('Can not compare Enum with %s' % other.__class__.__name__)
@@ -71,7 +69,7 @@ class Enum(object):
         """
         Returns a list of tuples with the value as first argument and the value container class as second argument.
         """
-        return sorted(cls.values.iteritems(), key=lambda x: x[0])
+        return sorted(list(cls.values.items()), key=lambda x: x[0])
 
     @classmethod
     def default(cls):
@@ -100,7 +98,7 @@ class Enum(object):
         """
         Will return a Enum.Value matching the value argument.
         """
-        if isinstance(name_or_numeric, basestring):
+        if isinstance(name_or_numeric, six.string_types):
             name_or_numeric = getattr(cls, name_or_numeric.upper())
 
         return cls.values.get(name_or_numeric)
@@ -117,14 +115,14 @@ class Enum(object):
         """
         Will return the human readable label for the matching Enum.Value.
         """
-        return translate(unicode(cls.get(numeric)))
+        return translate(six.u(cls.get(numeric)))
 
     @classmethod
     def items(cls):
         """
         Will return a list of tuples consisting of every enum value in the form [('NAME', value), ...]
         """
-        items = [(value.name, key) for key, value in cls.values.iteritems()]
+        items = [(value.name, key) for key, value in list(cls.values.items())]
         return sorted(items, key=lambda x: x[1])
 
     @classmethod
