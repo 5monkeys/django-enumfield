@@ -24,7 +24,7 @@ class EnumType(type):
         return enum
 
 
-@python_2_unicode_compatible
+
 class Enum(six.with_metaclass(EnumType)):
     """
     A container for holding and restoring enum values.
@@ -36,6 +36,7 @@ class Enum(six.with_metaclass(EnumType)):
     It can also validate enum value transitions by defining the _transitions variable as a dict with transitions.
     """
 
+    @python_2_unicode_compatible
     class Value(object):
         """
         A value represents a key value pair with a uppercase name and a integer value:
