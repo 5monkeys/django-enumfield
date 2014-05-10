@@ -10,7 +10,7 @@ def validate_valid_transition(enum, from_value, to_value):
     """
     validate_available_choice(enum, to_value)
     if hasattr(enum, '_transitions') and not enum.is_valid_transition(from_value, to_value):
-        message = _(six.u('{enum} can not go from "{from_value}" to "{to_value}"'))
+        message = _(six.text_type('{enum} can not go from "{from_value}" to "{to_value}"'))
         raise InvalidStatusOperationError(message.format(
             enum=enum.__name__,
             from_value=enum.name(from_value),
@@ -23,5 +23,5 @@ def validate_available_choice(enum, to_value):
     Validate that to_value is defined as a value in enum.
     """
     if to_value is not None and to_value not in list(dict(enum.choices()).keys()):
-        message = _(six.u('Select a valid choice. {value} is not one of the available choices.'))
+        message = _(six.text_type('Select a valid choice. {value} is not one of the available choices.'))
         raise InvalidStatusOperationError(message.format(value=to_value))

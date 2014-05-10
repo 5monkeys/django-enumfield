@@ -2,15 +2,15 @@ from django.test.client import RequestFactory
 from django.db import IntegrityError
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
+import six
+
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 from django_enumfield.exceptions import InvalidStatusOperationError
 from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, Beer, BeerStyle, BeerState
-import six
 
 
 class EnumFieldTest(TestCase):
-
     def test_enum_field_init(self):
         field = EnumField(PersonStatus)
         self.assertEqual(field.default, PersonStatus.UNBORN)
@@ -20,6 +20,7 @@ class EnumFieldTest(TestCase):
 
     def test_enum_field_save(self):
         # Test model with EnumField WITHOUT _transitions
+
         lamp = Lamp.objects.create()
         self.assertEqual(lamp.state, LampState.OFF)
         lamp.state = LampState.ON
@@ -58,13 +59,16 @@ class EnumFieldTest(TestCase):
 
     def test_magic_model_properties(self):
         beer = Beer.objects.create(style=BeerStyle.WEISSBIER)
-        self.assertEqual(getattr(beer, 'get_style_display')(), 'Weissbier')
+        beer_style = beer.get_style_display()
+        self.assertEqual(beer_style, 'Weissbier')
 
     def test_enum_field_del(self):
         lamp = Lamp.objects.create()
         del lamp.state
         self.assertEqual(lamp.state, None)
         self.assertRaises(IntegrityError, lamp.save)
+
+    def test_enum_field_del_save(self):
         beer = Beer.objects.create()
         beer.style = BeerStyle.STOUT
         beer.state = None
@@ -93,17 +97,16 @@ class EnumFieldTest(TestCase):
 
 
 class EnumTest(TestCase):
-
     def test_label(self):
-        self.assertEqual(PersonStatus.label(PersonStatus.ALIVE), six.u('Alive'))
+        self.assertEqual(PersonStatus.label(PersonStatus.ALIVE), six.text_type('Alive'))
 
     def test_name(self):
-        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.u('ALIVE'))
+        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.text_type('ALIVE'))
 
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum.Value))
-        self.assertTrue(isinstance(PersonStatus.get(six.u('ALIVE')), Enum.Value))
-        self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.label(PersonStatus.ALIVE))
+        self.assertTrue(isinstance(PersonStatus.get(six.text_type('ALIVE')), Enum.Value))
+        self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(six.text_type('ALIVE')))
 
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(list(PersonStatus.items())))

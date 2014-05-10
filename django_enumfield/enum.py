@@ -55,7 +55,7 @@ class Enum(six.with_metaclass(EnumType)):
             self.enum_type = enum_type
 
         def __str__(self):
-            return six.u(self.label)
+            return six.text_type(self.label)
 
         def __repr__(self):
             return str(self.label)
@@ -119,7 +119,7 @@ class Enum(six.with_metaclass(EnumType)):
         """
         Will return the human readable label for the matching Enum.Value.
         """
-        return translate(cls.get(numeric))
+        return translate(cls.get(numeric).label)
 
     @classmethod
     def items(cls):
