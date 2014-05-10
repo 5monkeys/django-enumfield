@@ -5,7 +5,7 @@ python:
   - 3.4
 
 install:
-  - pip install tox flake8 six
+  - pip install tox flake8
   - make install
 
 script:
