@@ -119,7 +119,7 @@ class Enum(six.with_metaclass(EnumType)):
         """
         Will return the human readable label for the matching Enum.Value.
         """
-        return translate(six.u(cls.get(numeric)))
+        return translate(cls.get(numeric))
 
     @classmethod
     def items(cls):
