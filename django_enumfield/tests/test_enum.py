@@ -103,7 +103,7 @@ class EnumTest(TestCase):
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum.Value))
         self.assertTrue(isinstance(PersonStatus.get(six.u('ALIVE')), Enum.Value))
-        self.assertEqual(six.u(PersonStatus.get(PersonStatus.ALIVE)), PersonStatus.label(PersonStatus.ALIVE))
+        self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.label(PersonStatus.ALIVE))
 
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(list(PersonStatus.items())))
