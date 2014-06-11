@@ -77,3 +77,8 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
         args, kwargs = introspector(self)
         # That's our definition!
         return field_class, args, kwargs
+
+    def deconstruct(self):
+        name, path, args, kwargs = super(EnumField, self).deconstruct()
+        kwargs['enum'] = self.enum
+        return name, path, args, kwargs
