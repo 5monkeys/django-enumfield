@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 
@@ -49,3 +51,14 @@ class BeerState(Enum):
 class Beer(models.Model):
     style = EnumField(BeerStyle)
     state = EnumField(BeerState, null=True, db_index=False)
+
+
+class LabelBeer(Enum):
+    STELLA = 0
+    JUPILER = 1
+    TYSKIE = 2
+
+    labels = {
+        STELLA: _('Stella Artois'),
+        TYSKIE: _('Browar Tyskie'),
+    }
