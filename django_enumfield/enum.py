@@ -40,7 +40,7 @@ class Enum(six.with_metaclass(EnumType)):
         def __init__(self, name, value, label, enum_type):
             self.name = name
             self.value = value
-            self.label = label or name
+            self._label = label
             self.enum_type = enum_type
 
         def __str__(self):
@@ -56,6 +56,10 @@ class Enum(six.with_metaclass(EnumType)):
                 return type(other)(self.value) == other
             else:
                 raise TypeError('Can not compare Enum with %s' % other.__class__.__name__)
+
+        @property
+        def label(self):
+            return self._label or self.name
 
     @classmethod
     def choices(cls):
