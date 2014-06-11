@@ -1,10 +1,29 @@
 django-enumfield
-==============
+================
 
 Provides an enumeration Django model field (using IntegerField) with reusable enums and transition validation.
 
 .. image:: https://travis-ci.org/5monkeys/django-enumfield.png?branch=master
-    :target: http://travis-ci.org/5monkeys/django-enumfield
+        :target: http://travis-ci.org/5monkeys/django-enumfield
+
+.. image:: https://pypip.in/d/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
+.. image:: https://pypip.in/v/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
+.. image:: https://pypip.in/egg/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
+.. image:: https://pypip.in/wheel/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
+.. image:: https://pypip.in/format/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
+.. image:: https://pypip.in/license/django-enumfield/badge.png
+        :target: https://pypi.python.org/pypi/django-enumfield/
+
 
 Installation
 ------------
