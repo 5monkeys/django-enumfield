@@ -50,7 +50,7 @@ class BeerState(Enum):
 
 class Beer(models.Model):
     style = EnumField(BeerStyle)
-    state = EnumField(BeerState, null=True, db_index=False)
+    state = EnumField(BeerState, null=True)
 
 
 class LabelBeer(Enum):
