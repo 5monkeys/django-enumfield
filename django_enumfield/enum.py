@@ -61,6 +61,10 @@ class Enum(six.with_metaclass(EnumType)):
         def label(self):
             return self._label or self.name
 
+        def deconstruct(self):
+            path = self.__module__ + '.' + self.__class__.__name__
+            return path, (self.name, self.value, self.label, self.enum_type), {}
+
     @classmethod
     def choices(cls):
         """ Choices for Enum
@@ -155,3 +159,6 @@ class Enum(six.with_metaclass(EnumType)):
         :rtype: list
         """
         return cls._transitions[to_value]
+
+
+Value = Enum.Value
