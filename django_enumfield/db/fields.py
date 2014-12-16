@@ -1,6 +1,6 @@
 from django.db import models
 from django import forms
-import six
+from django.utils import six
 
 from django_enumfield import validators
 
