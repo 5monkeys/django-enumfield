@@ -1,6 +1,6 @@
 import logging
 
-import six
+from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 
 from django_enumfield.db.fields import EnumField
