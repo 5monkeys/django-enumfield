@@ -79,5 +79,7 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
 
     def deconstruct(self):
         name, path, args, kwargs = super(EnumField, self).deconstruct()
-        kwargs['enum'] = self.enum
+        path = "django.db.models.fields.IntegerField"
+        if 'choices' in kwargs:
+            del kwargs['choices']
         return name, path, args, kwargs
