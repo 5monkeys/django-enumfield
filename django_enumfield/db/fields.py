@@ -12,9 +12,8 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
     """
 
     def __init__(self, enum, *args, **kwargs):
-        default = kwargs.get('default')
         kwargs['choices'] = enum.choices()
-        if not default:
+        if 'default' not in kwargs:
             kwargs['default'] = enum.default()
         self.enum = enum
         models.IntegerField.__init__(self, *args, **kwargs)

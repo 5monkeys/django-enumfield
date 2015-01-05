@@ -17,6 +17,8 @@ class EnumFieldTest(TestCase):
         self.assertEqual(len(PersonStatus.choices()), len(field.choices))
         field = EnumField(PersonStatus, default=PersonStatus.ALIVE)
         self.assertEqual(field.default, PersonStatus.ALIVE)
+        field = EnumField(PersonStatus, default=None)
+        self.assertEqual(field.default, None)
 
     def test_enum_field_save(self):
         # Test model with EnumField WITHOUT _transitions
