@@ -66,12 +66,15 @@ class Enum(six.with_metaclass(EnumType)):
             return path, (self.name, self.value, self.label, self.enum_type), {}
 
     @classmethod
-    def choices(cls):
+    def choices(cls, blank=False):
         """ Choices for Enum
         :return: List of tuples (<value>, <human-readable value>)
         :rtype: list
         """
-        return sorted([(key, value) for key, value in cls.values.items()], key=lambda x: x[0])
+        choices = sorted([(key, value) for key, value in cls.values.items()], key=lambda x: x[0])
+        if blank:
+            choices.insert(0, ('', Enum.Value('', None, '', cls)))
+        return choices
 
     @classmethod
     def default(cls):

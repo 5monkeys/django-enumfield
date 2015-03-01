@@ -60,7 +60,7 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
         defaults = {'widget': forms.Select,
                     'form_class': forms.TypedChoiceField,
                     'coerce': int,
-                    'choices': self.enum.choices()}
+                    'choices': self.enum.choices(blank=self.blank)}
         defaults.update(kwargs)
         return super(EnumField, self).formfield(**defaults)
 
