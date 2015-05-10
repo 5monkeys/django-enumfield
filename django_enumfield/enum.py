@@ -152,7 +152,10 @@ class Enum(six.with_metaclass(EnumType)):
         :return: Success flag
         :rtype: bool
         """
-        return from_value == to_value or from_value in cls.transition_origins(to_value)
+        try:
+            return from_value == to_value or from_value in cls.transition_origins(to_value)
+        except KeyError:
+            return False
 
     @classmethod
     def transition_origins(cls, to_value):

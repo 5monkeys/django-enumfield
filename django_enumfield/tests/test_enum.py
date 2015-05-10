@@ -53,6 +53,10 @@ class EnumFieldTest(TestCase):
         person.status = PersonStatus.DEAD
         self.assertEqual(person.save(), 'Person.save')
 
+        with self.assertRaises(InvalidStatusOperationError):
+            person.status = PersonStatus.VOID
+            person.save()
+
         self.assertTrue(Person.objects.filter(status=PersonStatus.DEAD).exists())
         beer = Beer.objects.create()
         beer.style = BeerStyle.LAGER
@@ -83,6 +87,7 @@ class EnumFieldTest(TestCase):
         class PersonForm(ModelForm):
             class Meta:
                 model = Person
+                fields = ('status',)
 
         request_factory = RequestFactory()
         request = request_factory.post('', data={'status': '2'})
@@ -100,6 +105,7 @@ class EnumFieldTest(TestCase):
         class BeerForm(ModelForm):
             class Meta:
                 model = Beer
+                fields = ('style', 'state')
 
         form = BeerForm()
 
