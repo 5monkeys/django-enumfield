@@ -63,6 +63,7 @@ class EnumFieldTest(TestCase):
         self.assertEqual(beer.state, BeerState.FIZZY)
         beer.save()
 
+
     def test_magic_model_properties(self):
         beer = Beer.objects.create(style=BeerStyle.WEISSBIER)
         self.assertEqual(getattr(beer, 'get_style_display')(), 'WEISSBIER')
@@ -87,6 +88,8 @@ class EnumFieldTest(TestCase):
         class PersonForm(ModelForm):
             class Meta:
                 model = Person
+                fields = ('status',)
+
 
         request_factory = RequestFactory()
         request = request_factory.post('', data={'status': '2'})
