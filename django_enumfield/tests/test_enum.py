@@ -53,6 +53,10 @@ class EnumFieldTest(TestCase):
         person.status = PersonStatus.DEAD
         self.assertEqual(person.save(), 'Person.save')
 
+        with self.assertRaises(InvalidStatusOperationError):
+            person.status = PersonStatus.VOID
+            person.save()
+
         self.assertTrue(Person.objects.filter(status=PersonStatus.DEAD).exists())
         beer = Beer.objects.create()
         beer.style = BeerStyle.LAGER

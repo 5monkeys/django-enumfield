@@ -19,9 +19,10 @@ class PersonStatus(Enum):
     ALIVE = 1
     DEAD = 2
     REANIMATED = 3
+    VOID = 4
 
     _transitions = {
-        UNBORN: (),
+        UNBORN: (VOID,),
         ALIVE: (UNBORN,),
         DEAD: (UNBORN, ALIVE),
         REANIMATED: (DEAD,)
