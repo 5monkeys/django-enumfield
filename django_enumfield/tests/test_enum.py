@@ -105,6 +105,7 @@ class EnumFieldTest(TestCase):
         class BeerForm(ModelForm):
             class Meta:
                 model = Beer
+                fields = ('style', 'state')
 
         form = BeerForm()
 
