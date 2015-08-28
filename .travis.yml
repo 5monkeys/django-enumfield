@@ -5,13 +5,20 @@ python:
   - 3.3
   - 3.4
 
+env:
+  - DJANGO="Django>=1.5,<1.6"
+  - DJANGO="Django>=1.6,<1.7"
+  - DJANGO="Django>=1.7,<1.8"
+  - DJANGO="Django>=1.8,<1.9"
+
 install:
-  - pip install tox flake8
+  - pip install flake8
+  - pip install -q $DJANGO
   - make install
 
 script:
   - make flake8
-  - tox
+  - python run_tests.py
 
 notifications:
   email:
