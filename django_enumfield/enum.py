@@ -111,7 +111,7 @@ class Enum(NativeEnum):
         :return: label for value
         :rtype: str or
         """
-        labels = getattr(self.__class__, 'labels', None)
+        labels = getattr(self.__class__, '_labels', None)
         if labels is None:
             return six.text_type(self.name)
 

@@ -59,7 +59,7 @@ class LabelBeer(Enum):
     JUPILER = 1
     TYSKIE = 2
 
-    labels = {
+    _labels = {
         STELLA: _('Stella Artois'),
         TYSKIE: _('Browar Tyskie'),
     }
