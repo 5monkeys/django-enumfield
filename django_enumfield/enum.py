@@ -52,6 +52,15 @@ class Enum(NativeEnum):
     def values(self):
         return self.__members__
 
+    def deconstruct(self):
+        """
+        See "Adding a deconstruct() method" in
+        https://docs.djangoproject.com/en/1.8/topics/migrations/
+        """
+        c = self.__class__
+        path = '{}.{}'.format(c.__module__, c.__name__)
+        return path, [self.value], {}
+
     @classmethod
     def choices(cls, blank=False):
         """ Choices for Enum
@@ -111,7 +120,7 @@ class Enum(NativeEnum):
         :return: label for value
         :rtype: str or
         """
-        labels = getattr(self.__class__, 'labels', None)
+        labels = getattr(self.__class__, '_labels', None)
         if labels is None:
             return six.text_type(self.name)
 

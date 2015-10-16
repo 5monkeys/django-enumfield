@@ -65,7 +65,7 @@ You can use your own labels for Enum items
         CAT = 1
         DOG = 2
 
-        labels = {
+        _labels = {
             CAT: 'Cat',
             DOG: 'Dog'
         }
@@ -112,7 +112,7 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         MALE = 1
         FEMALE = 2
 
-        labels = {
+        _labels = {
             MALE: 'Male',
             FEMALE: 'Female',
         }
