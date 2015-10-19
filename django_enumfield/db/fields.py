@@ -1,11 +1,11 @@
-from django.db import models
-from django import forms
-from django_enumfield import validators
-
 from enum import Enum
 
+from django.db import models
 from django.utils.functional import curry
 from django.utils.encoding import force_text
+from django import forms
+
+from django_enumfield import validators
 
 
 class EnumField(models.Field):
@@ -18,12 +18,14 @@ class EnumField(models.Field):
     def __init__(self, enum, *args, **kwargs):
         kwargs['choices'] = enum.choices()
         if 'default' not in kwargs:
-            kwargs['default'] = enum.default().value
-        else:
-            if isinstance(kwargs['default'], Enum):
-                kwargs['default'] = kwargs['default'].value
+            kwargs['default'] = enum.default()
         self.enum = enum
         super(EnumField, self).__init__(self, *args, **kwargs)
+
+    def get_default(self):
+        if callable(self.default):
+            return self.default()
+        return self.default
 
     def get_internal_type(self):
         return "IntegerField"
@@ -53,6 +55,10 @@ class EnumField(models.Field):
             return self.enum.get(value)
 
         return value
+
+    def to_python(self, value):
+        if value is not None:
+            return self.enum.get(value)
 
     def _setup_validation(self, sender, **kwargs):
         """
