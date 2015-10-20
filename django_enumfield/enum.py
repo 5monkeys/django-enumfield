@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 from enum import Enum as NativeEnum
+from enum import IntEnum as NativeIntEnum
 
 import logging
 
@@ -21,7 +22,7 @@ class BlankEnum(NativeEnum):
         return ''
 
 
-class Enum(NativeEnum):
+class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
     __labels__ = {}
