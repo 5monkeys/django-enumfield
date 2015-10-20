@@ -3,6 +3,7 @@ from django.db import IntegrityError
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
 from django.utils import six
+import django
 
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum, BlankEnum
@@ -44,8 +45,11 @@ class EnumFieldTest(TestCase):
 
         person = Person.objects.get(pk=pk)
         self.assertEqual(person.status, PersonStatus.DEAD)
-        # TODO: find a way to get only one type
-        self.assertTrue(isinstance(person.status, (PersonStatus, int)))
+        if django.VERSION < (1, 8):
+            # SubfieldBase seems not using .to_python() on model initialiation
+            self.assertTrue(isinstance(person.status, int))
+        else:
+            self.assertTrue(isinstance(person.status, PersonStatus))
 
         self.assertRaises(InvalidStatusOperationError, setattr, person, 'status', 99)
 
