@@ -1,26 +1,72 @@
+from enum import Enum
+
 from django.db import models
-from django import forms
+from django.utils.functional import curry
+from django.utils.encoding import force_text
 from django.utils import six
+from django import forms
+import django
 
-from django_enumfield import validators
+from .. import validators
 
 
-class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
+if django.VERSION < (1, 8):
+    base = six.with_metaclass(models.SubfieldBase, models.Field)
+else:
+    base = models.Field
+
+
+class EnumField(base):
     """ EnumField is a convenience field to automatically handle validation of transitions
         between Enum values and set field choices from the enum.
         EnumField(MyEnum, default=MyEnum.INITIAL)
     """
+    default_error_messages = models.IntegerField.default_error_messages
 
     def __init__(self, enum, *args, **kwargs):
         kwargs['choices'] = enum.choices()
         if 'default' not in kwargs:
             kwargs['default'] = enum.default()
         self.enum = enum
-        models.IntegerField.__init__(self, *args, **kwargs)
+        super(EnumField, self).__init__(self, *args, **kwargs)
+
+    def get_default(self):
+        if callable(self.default):
+            return self.default()
+        return self.default
+
+    def get_internal_type(self):
+        return "IntegerField"
 
     def contribute_to_class(self, cls, name, virtual_only=False):
         super(EnumField, self).contribute_to_class(cls, name)
+        if self.choices:
+            setattr(cls, 'get_%s_display' % self.name,
+                    curry(self._get_FIELD_display))
         models.signals.class_prepared.connect(self._setup_validation, sender=cls)
+
+    def _get_FIELD_display(self, cls):
+        value = getattr(cls, self.attname)
+        return force_text(value.label, strings_only=True)
+
+    def get_prep_value(self, value):
+        value = super(EnumField, self).get_prep_value(value)
+        if value is None:
+            return value
+
+        if isinstance(value, Enum):
+            return value.value
+        return int(value)
+
+    def from_db_value(self, value, expression, connection, context):
+        if value is not None:
+            return self.enum.get(value)
+
+        return value
+
+    def to_python(self, value):
+        if value is not None:
+            return self.enum.get(value)
 
     def _setup_validation(self, sender, **kwargs):
         """
@@ -76,7 +122,6 @@ class EnumField(six.with_metaclass(models.SubfieldBase, models.IntegerField)):
 
     def deconstruct(self):
         name, path, args, kwargs = super(EnumField, self).deconstruct()
-        path = "django.db.models.fields.IntegerField"
-        if 'choices' in kwargs:
-            del kwargs['choices']
+        kwargs['enum'] = self.enum
+        del kwargs['verbose_name']
         return name, path, args, kwargs
