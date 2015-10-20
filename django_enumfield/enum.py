@@ -53,7 +53,8 @@ class Enum(NativeEnum):
         return super(Enum, self).__eq__(other)
 
     def __hash__(self):
-        return hash(self.deconstruct())
+        path, (val,), _ = self.deconstruct()
+        return hash('{}.{}'.format(path, val))
 
     def deconstruct(self):
         """

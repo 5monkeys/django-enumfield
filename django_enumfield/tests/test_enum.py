@@ -168,3 +168,6 @@ class EnumTest(TestCase):
         self.assertTrue(isinstance(LabelBeer.STELLA.label, six.string_types))
         self.assertEqual(LabelBeer.STELLA.label,
                          six.text_type('Stella Artois'))
+
+    def test_hash(self):
+        self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])
