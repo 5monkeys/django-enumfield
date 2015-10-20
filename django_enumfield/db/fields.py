@@ -3,12 +3,20 @@ from enum import Enum
 from django.db import models
 from django.utils.functional import curry
 from django.utils.encoding import force_text
+from django.utils import six
 from django import forms
+import django
 
-from django_enumfield import validators
+from .. import validators
 
 
-class EnumField(models.Field):
+if django.VERSION < (1, 8):
+    base = six.with_metaclass(models.SubfieldBase, models.Field)
+else:
+    base = models.Field
+
+
+class EnumField(base):
     """ EnumField is a convenience field to automatically handle validation of transitions
         between Enum values and set field choices from the enum.
         EnumField(MyEnum, default=MyEnum.INITIAL)
