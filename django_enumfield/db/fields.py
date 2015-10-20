@@ -85,6 +85,8 @@ class EnumField(base):
                 # First setattr no previous value on instance.
                 old_value = new_value
             # Update private enum attribute with new value
+            if new_value is not None and not isinstance(new_value, Enum):
+                new_value = enum.get(new_value)
             setattr(self, private_att_name, new_value)
             # Run validation for new value.
             validators.validate_valid_transition(enum, old_value, new_value)
