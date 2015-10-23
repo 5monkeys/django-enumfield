@@ -1,14 +1,22 @@
-from django.db import models
-from django import forms
-from django_enumfield import validators
-
 from enum import Enum
 
+from django.db import models
 from django.utils.functional import curry
 from django.utils.encoding import force_text
+from django.utils import six
+from django import forms
+import django
+
+from .. import validators
 
 
-class EnumField(models.Field):
+if django.VERSION < (1, 8):
+    base = six.with_metaclass(models.SubfieldBase, models.Field)
+else:
+    base = models.Field
+
+
+class EnumField(base):
     """ EnumField is a convenience field to automatically handle validation of transitions
         between Enum values and set field choices from the enum.
         EnumField(MyEnum, default=MyEnum.INITIAL)
@@ -18,12 +26,14 @@ class EnumField(models.Field):
     def __init__(self, enum, *args, **kwargs):
         kwargs['choices'] = enum.choices()
         if 'default' not in kwargs:
-            kwargs['default'] = enum.default().value
-        else:
-            if isinstance(kwargs['default'], Enum):
-                kwargs['default'] = kwargs['default'].value
+            kwargs['default'] = enum.default()
         self.enum = enum
         super(EnumField, self).__init__(self, *args, **kwargs)
+
+    def get_default(self):
+        if callable(self.default):
+            return self.default()
+        return self.default
 
     def get_internal_type(self):
         return "IntegerField"
@@ -54,6 +64,10 @@ class EnumField(models.Field):
 
         return value
 
+    def to_python(self, value):
+        if value is not None:
+            return self.enum.get(value)
+
     def _setup_validation(self, sender, **kwargs):
         """
         User a customer setter for the field to validate new value against the old one.
@@ -71,6 +85,8 @@ class EnumField(models.Field):
                 # First setattr no previous value on instance.
                 old_value = new_value
             # Update private enum attribute with new value
+            if new_value is not None and not isinstance(new_value, Enum):
+                new_value = enum.get(new_value)
             setattr(self, private_att_name, new_value)
             # Run validation for new value.
             validators.validate_valid_transition(enum, old_value, new_value)

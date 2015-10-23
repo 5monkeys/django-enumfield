@@ -1,26 +1,47 @@
+sudo: false
+
 language: python
 
 python:
   - 2.7
   - 3.3
   - 3.4
+  - 3.5
 
 env:
-  - DJANGO="Django>=1.5,<1.6"
-  - DJANGO="Django>=1.6,<1.7"
-  - DJANGO="Django>=1.7,<1.8"
-  - DJANGO="Django>=1.8,<1.9"
+  - DJANGO=1.6
+  - DJANGO=1.7
+  - DJANGO=1.8
+
+matrix:
+  exclude:
+    - python: 3.5
+      env: DJANGO=1.6
+    - python: 3.5
+      env: DJANGO=1.7
+  include:
+    - python: 3.4
+      env: DJANGO=1.8  COVERAGE=true  COVERALLS_REPO_TOKEN=LdECqqwg7eelQx9w8gvooUZCFIaCqGZCv
+  allow_failures:
+    - env: COVERAGE=true
 
 install:
   - pip install flake8
-  - pip install -q $DJANGO
+  - pip install -q "Django>=$DJANGO,<$DJANGO.99"
   - make install
 
 script:
   - make flake8
-  - python run_tests.py
+  - make test
+
+after_script:
+  - if [ "$COVERAGE" == "true" ]; then
+    pip install --quiet python-coveralls;
+    make coverage;
+    coverage report;
+    coveralls --ignore-errors;
+    fi
 
 notifications:
   email:
     - hannes@5monkeys.se
-

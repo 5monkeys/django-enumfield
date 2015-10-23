@@ -3,26 +3,11 @@ django-enumfield
 
 Provides an enumeration Django model field (using IntegerField) with reusable enums and transition validation.
 
-.. image:: https://travis-ci.org/5monkeys/django-enumfield.png?branch=master
+.. image:: https://travis-ci.org/5monkeys/django-enumfield.svg?branch=master
         :target: http://travis-ci.org/5monkeys/django-enumfield
 
-.. image:: https://pypip.in/d/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
-
-.. image:: https://pypip.in/v/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
-
-.. image:: https://pypip.in/egg/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
-
-.. image:: https://pypip.in/wheel/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
-
-.. image:: https://pypip.in/format/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
-
-.. image:: https://pypip.in/license/django-enumfield/badge.png
-        :target: https://pypi.python.org/pypi/django-enumfield/
+.. image:: https://coveralls.io/repos/5monkeys/django-enumfield/badge.svg?branch=master&service=github
+        :target: https://coveralls.io/github/5monkeys/django-enumfield
 
 
 Installation
@@ -65,7 +50,7 @@ You can use your own labels for Enum items
         CAT = 1
         DOG = 2
 
-        _labels = {
+        __labels__ = {
             CAT: 'Cat',
             DOG: 'Dog'
         }
@@ -82,7 +67,7 @@ The Enum-class provides the possibility to use transition validation.
         DEAD = 2
         REANIMATED = 3
 
-        _transitions = {
+        __transitions__ = {
             DEAD: (ALIVE,),
             REANIMATED: (DEAD,)
         }
@@ -112,7 +97,7 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         MALE = 1
         FEMALE = 2
 
-        _labels = {
+        __labels__ = {
             MALE: 'Male',
             FEMALE: 'Female',
         }

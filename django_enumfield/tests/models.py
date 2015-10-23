@@ -21,7 +21,7 @@ class PersonStatus(Enum):
     REANIMATED = 3
     VOID = 4
 
-    _transitions = {
+    __transitions__ = {
         UNBORN: (VOID,),
         ALIVE: (UNBORN,),
         DEAD: (UNBORN, ALIVE),
@@ -59,7 +59,7 @@ class LabelBeer(Enum):
     JUPILER = 1
     TYSKIE = 2
 
-    _labels = {
+    __labels__ = {
         STELLA: _('Stella Artois'),
         TYSKIE: _('Browar Tyskie'),
     }
