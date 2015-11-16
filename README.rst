@@ -37,6 +37,32 @@ Create an Enum-class and pass it as first argument to the Django model EnumField
     class Beer(models.Model):
         style = enum.EnumField(BeerStyle, default=BeerStyle.LAGER)
 
+You can also set default value on your enum class using ``__default__``
+attribute
+
+.. code:: python
+
+    class BeerStyle(enum.Enum):
+        LAGER = 0
+        STOUT = 1
+        WEISSBIER = 2
+
+        __default__ = LAGER
+
+
+    class Beer(models.Model):
+        style_default_lager = enum.EnumField(BeerStyle)
+        style_default_stout = enum.EnumField(BeerStyle, default=BeerStyle.STOUT)
+
+
+When you set __default__ attribute, you can access default value via
+``.default()`` method of your enum class
+
+.. code:: python
+
+    assert BeerStyle.default() == BeerStyle.LAGER
+
+
 .. code:: python
 
     Beer.objects.create(style=BeerStyle.STOUT)

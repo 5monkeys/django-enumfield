@@ -26,6 +26,7 @@ class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
     __labels__ = {}
+    __default__ = None
     __transitions__ = {}
 
     def __ge__(self, other):
@@ -80,13 +81,16 @@ class Enum(NativeIntEnum):
 
     @classmethod
     def default(cls):
-        """ Default Enum value. Override this method if you need another default value.
+        """ Default Enum value. Set default value to `__default__` attribute
+        of your enum class or override this method if you need another
+        default value.
         Usage:
             IntegerField(choices=my_enum.choices(), default=my_enum.default(), ...
         :return Default value, which is the first one by default.
         :rtype: enum member
         """
-        return tuple(cls)[0]
+        if cls.__default__ is not None:
+            return cls(cls.__default__)
 
     @classmethod
     def field(cls, **kwargs):

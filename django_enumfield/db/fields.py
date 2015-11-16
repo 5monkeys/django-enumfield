@@ -25,8 +25,8 @@ class EnumField(base):
 
     def __init__(self, enum, *args, **kwargs):
         kwargs['choices'] = enum.choices()
-        if 'default' not in kwargs:
-            kwargs['default'] = enum.default()
+        if enum.default() is not None:
+            kwargs.setdefault('default', enum.default())
         self.enum = enum
         super(EnumField, self).__init__(self, *args, **kwargs)
 
@@ -78,6 +78,8 @@ class EnumField(base):
         enum = self.enum
 
         def set_enum(self, new_value):
+            if isinstance(new_value, models.NOT_PROVIDED):
+                new_value = None
             if hasattr(self, private_att_name):
                 # Fetch previous value from private enum attribute.
                 old_value = getattr(self, private_att_name)
