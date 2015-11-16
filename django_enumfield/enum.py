@@ -15,7 +15,7 @@ class EnumType(type):
     def __new__(mcs, *args):
         """ Create enum values from all uppercase class attributes and store them in a dict on the Enum class."""
         enum = super(EnumType, mcs).__new__(mcs, *args)
-        attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]
+        attributes = [(k, getattr(enum, k)) for k in dir(enum) if k.isupper()]
         labels = enum.__dict__.get('labels', {})
 
         enum.values = {}
