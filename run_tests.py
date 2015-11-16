@@ -39,6 +39,8 @@ def main():
 
     from django.test.utils import get_runner
     test_runner = get_runner(settings)(verbosity=2, interactive=True)
+    if '--failfast' in sys.argv:
+        test_runner.failfast = True
     failures = test_runner.run_tests(['django_enumfield'])
     sys.exit(failures)
 
