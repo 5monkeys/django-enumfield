@@ -38,7 +38,7 @@ For testing with Django 1.9rc1, use
 
 .. code:: sh
 
-    $ pip install --pre django-enumfield==1.3b1
+    $ pip install --pre django-enumfield==1.3b2
 
 If you are looking for native ``enum`` (or enum34_) support, try testing
 `Pull Request #26`__ which is planned for Django 1.10+.
