@@ -124,6 +124,14 @@ class EnumFieldTest(TestCase):
 
     def test_migration(self):
         if django.VERSION >= (1, 7):
+            from os.path import abspath, dirname, join, exists
+
+            app_dir = dirname(abspath(__file__))
+            self.assertTrue(exists(join(app_dir, 'models.py')))
+
+            migrations_dir = join(app_dir, 'migrations')
+            self.assertTrue(not exists(migrations_dir))
+
             call_command('makemigrations', 'tests')
 
 
