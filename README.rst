@@ -6,6 +6,18 @@ Provides an enumeration Django model field (using IntegerField) with reusable en
 .. image:: https://travis-ci.org/5monkeys/django-enumfield.svg?branch=master
         :target: http://travis-ci.org/5monkeys/django-enumfield
 
+.. image:: https://img.shields.io/pypi/v/django-enumfield.svg
+    :target: https://pypi.python.org/pypi/django-enumfield
+
+.. image:: https://img.shields.io/pypi/l/django-enumfield.svg
+    :target: https://pypi.python.org/pypi/django-enumfield
+
+.. image:: https://img.shields.io/pypi/pyversions/django-enumfield.svg
+    :target: https://pypi.python.org/pypi/django-enumfield
+
+.. image:: https://img.shields.io/pypi/wheel/django-enumfield.svg
+    :target: https://pypi.python.org/pypi/django-enumfield
+
 
 Installation
 ------------
