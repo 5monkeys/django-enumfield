@@ -1,3 +1,5 @@
+import django
+from django.core.management import call_command
 from django.test.client import RequestFactory
 from django.db import IntegrityError
 from django.forms import ModelForm, TypedChoiceField
@@ -119,6 +121,10 @@ class EnumFieldTest(TestCase):
         self.assertEqual(form.fields['state'].choices[1][1].label, 'FIZZY')
         self.assertEqual(form.fields['state'].choices[2][1].label, 'STALE')
         self.assertEqual(form.fields['state'].choices[3][1].label, 'EMPTY')
+
+    def test_migration(self):
+        if django.VERSION >= (1, 7):
+            call_command('makemigrations', 'tests')
 
 
 class EnumTest(TestCase):

@@ -7,4 +7,5 @@
 .DS_Store
 /.coverage
 /htmlcov/
+migrations/
 /.tox/

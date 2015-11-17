@@ -1,11 +1,19 @@
 #!/usr/bin/env python
 
+import os
 import sys
 import django
 from django.conf import settings
 
 
 def main():
+
+    from os.path import exists, abspath, dirname, join
+    migrations_dir = join(
+        dirname(abspath(__file__)), 'django_enumfield', 'tests', 'migrations')
+    if exists(migrations_dir):
+        os.system('rm -r ' + migrations_dir)
+
     if not settings.configured:
         # Dynamically configure the Django settings with the minimum necessary to
         # get Django running tests
