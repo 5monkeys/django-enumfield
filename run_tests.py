@@ -7,6 +7,8 @@ from django.conf import settings
 
 
 def main():
+    import warnings
+    warnings.filterwarnings('error', category=DeprecationWarning)
 
     from os.path import exists, abspath, dirname, join
     migrations_dir = join(
