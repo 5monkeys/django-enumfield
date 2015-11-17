@@ -83,9 +83,10 @@ class EnumField(base_class):
 
     def deconstruct(self):
         name, path, args, kwargs = super(EnumField, self).deconstruct()
-        path = "django.db.models.fields.IntegerField"
         if django.VERSION >= (1, 9):
             kwargs['enum'] = self.enum
+        else:
+            path = "django.db.models.fields.IntegerField"
         if 'choices' in kwargs:
             del kwargs['choices']
         return name, path, args, kwargs
