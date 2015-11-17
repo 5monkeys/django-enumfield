@@ -133,6 +133,7 @@ class EnumFieldTest(TestCase):
             self.assertTrue(not exists(migrations_dir))
 
             call_command('makemigrations', 'tests')
+            call_command('sqlmigrate', 'tests', '0001')
 
 
 class EnumTest(TestCase):
