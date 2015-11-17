@@ -6,15 +6,19 @@ import django
 from django.conf import settings
 
 
-def main():
-    import warnings
-    warnings.filterwarnings('error', category=DeprecationWarning)
-
+def delete_migrations():
     from os.path import exists, abspath, dirname, join
     migrations_dir = join(
         dirname(abspath(__file__)), 'django_enumfield', 'tests', 'migrations')
     if exists(migrations_dir):
         os.system('rm -r ' + migrations_dir)
+
+
+def main():
+    import warnings
+    warnings.filterwarnings('error', category=DeprecationWarning)
+
+    delete_migrations()
 
     if not settings.configured:
         # Dynamically configure the Django settings with the minimum necessary to
@@ -50,7 +54,11 @@ def main():
     test_runner = get_runner(settings)(verbosity=2, interactive=True)
     if '--failfast' in sys.argv:
         test_runner.failfast = True
+
     failures = test_runner.run_tests(['django_enumfield'])
+
+    delete_migrations()
+
     sys.exit(failures)
 
 
