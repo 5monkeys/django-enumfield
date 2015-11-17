@@ -10,11 +10,33 @@ Provides an enumeration Django model field (using IntegerField) with reusable en
 Installation
 ------------
 
-Install django-enumfield in your python environment
+Currently, `we test`__ Django versions 1.6-1.8 and Python versions 2.7,3.3-3.5.
+
+Install ``django-enumfield`` in your Python environment:
+
+.. _travis: https://travis-ci.org/5monkeys/django-enumfield
+
+__ travis_
 
 .. code:: sh
 
     $ pip install django-enumfield
+
+For testing with Django 1.9rc1, use
+
+.. code:: sh
+
+    $ pip install --pre django-enumfield==1.3b1
+
+If you are looking for native ``enum`` (or enum34_) support, try testing
+`Pull Request #26`__ which is planned for Django 1.10+.
+
+.. _pr26: https://github.com/5monkeys/django-enumfield/pull/26
+
+__ pr26_
+
+.. _enum34: https://pypi.python.org/pypi/enum34
+
 
 Usage
 -----
