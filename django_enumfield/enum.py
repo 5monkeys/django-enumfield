@@ -109,7 +109,10 @@ class Enum(six.with_metaclass(EnumType)):
         :rtype: Enum.Value
         """
         if isinstance(name_or_numeric, six.string_types):
-            name_or_numeric = getattr(cls, name_or_numeric.upper())
+            try:
+                name_or_numeric = getattr(cls, name_or_numeric.upper())
+            except AttributeError:
+                return None
 
         return cls.values.get(name_or_numeric)
 
