@@ -90,6 +90,7 @@ class EnumField(base):
             if new_value is not None and not isinstance(new_value, Enum):
                 new_value = enum.get(new_value)
             setattr(self, private_att_name, new_value)
+            self.__dict__[att_name] = new_value
             # Run validation for new value.
             validators.validate_valid_transition(enum, old_value, new_value)
 
@@ -97,6 +98,7 @@ class EnumField(base):
             return getattr(self, private_att_name)
 
         def delete_enum(self):
+            self.__dict__[att_name] = None
             return setattr(self, private_att_name, None)
 
         if not sender._meta.abstract:

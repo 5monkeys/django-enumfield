@@ -42,6 +42,7 @@ class PersonStatusDefault(Enum):
 
 
 class Person(models.Model):
+    example = models.CharField(max_length=100, default='foo')
     status = EnumField(PersonStatus, default=PersonStatus.ALIVE)
 
     def save(self, *args, **kwargs):
