@@ -5,20 +5,11 @@ python: 3.5
 
 env:
   matrix:
-    - ENV=py27-django15
-    - ENV=py27-django16
-    - ENV=py27-django17
     - ENV=py27-django18
     - ENV=py27-django19
     - ENV=py27-django110
     - ENV=py27-django111
-    - ENV=py33-django15
-    - ENV=py33-django16
-    - ENV=py33-django17
     - ENV=py33-django18
-    - ENV=py34-django15
-    - ENV=py34-django16
-    - ENV=py34-django17
     - ENV=py34-django18
     - ENV=py34-django19
     - ENV=py34-django110
@@ -27,6 +18,7 @@ env:
     - ENV=py35-django19
     - ENV=py35-django110
     - ENV=py35-django111
+    - ENV=py36-django111
     - ENV=coverage
 
 install:
