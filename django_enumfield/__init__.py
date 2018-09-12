@@ -17,7 +17,7 @@ def get_version(version=None):
     main = '.'.join(str(x) for x in version[:parts])
 
     sub = ''
-    if version[3] != 'final':
+    if version[3] != 'final':  # pragma: no cover
         mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'c'}
         sub = mapping[version[3]] + str(version[4])
 
