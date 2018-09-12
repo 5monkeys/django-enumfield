@@ -1,3 +1,5 @@
+from os.path import abspath, dirname, join, exists
+
 import django
 from django.core.management import call_command
 from django.test.client import RequestFactory
@@ -83,6 +85,24 @@ class EnumFieldTest(TestCase):
         self.assertEqual(beer.state, None)
         self.assertEqual(beer.style, BeerStyle.STOUT)
 
+    def test_enum_field_modelform_create(self):
+        class PersonForm(ModelForm):
+            class Meta:
+                model = Person
+                fields = ('status',)
+
+        request_factory = RequestFactory()
+        request = request_factory.post('', data={'status': '2'})
+        form = PersonForm(request.POST)
+        self.assertTrue(isinstance(form.fields['status'], TypedChoiceField))
+        self.assertTrue(form.is_valid())
+        person = form.save()
+        self.assertTrue(person.status, PersonStatus.DEAD)
+
+        request = request_factory.post('', data={'status': '99'})
+        form = PersonForm(request.POST, instance=person)
+        self.assertFalse(form.is_valid())
+
     def test_enum_field_modelform(self):
         person = Person.objects.create()
 
@@ -123,17 +143,14 @@ class EnumFieldTest(TestCase):
         self.assertEqual(form.fields['state'].choices[3][1].label, 'EMPTY')
 
     def test_migration(self):
-        if django.VERSION >= (1, 7):
-            from os.path import abspath, dirname, join, exists
+        app_dir = dirname(abspath(__file__))
+        self.assertTrue(exists(join(app_dir, 'models.py')))
 
-            app_dir = dirname(abspath(__file__))
-            self.assertTrue(exists(join(app_dir, 'models.py')))
+        migrations_dir = join(app_dir, 'migrations')
+        self.assertTrue(not exists(migrations_dir))
 
-            migrations_dir = join(app_dir, 'migrations')
-            self.assertTrue(not exists(migrations_dir))
-
-            call_command('makemigrations', 'tests')
-            call_command('sqlmigrate', 'tests', '0001')
+        call_command('makemigrations', 'tests')
+        call_command('sqlmigrate', 'tests', '0001')
 
 
 class EnumTest(TestCase):

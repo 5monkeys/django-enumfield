@@ -1,55 +1,27 @@
 sudo: false
 
 language: python
-
-python:
-  - 2.7
-  - 3.3
-  - 3.4
-  - 3.5
+python: 3.6
 
 env:
-  - DJANGO=1.6
-  - DJANGO=1.7
-  - DJANGO=1.8
-  - DJANGO==1.9rc1
-
-matrix:
-  exclude:
-    - python: 3.3
-      env: DJANGO==1.9rc1
-    - python: 3.5
-      env: DJANGO=1.6
-    - python: 3.5
-      env: DJANGO=1.7
-  include:
-    - python: 3.4
-      env: DJANGO=1.8  COVERAGE=true  COVERALLS_REPO_TOKEN=LdECqqwg7eelQx9w8gvooUZCFIaCqGZCv
-  allow_failures:
-    - env: COVERAGE=true
+  matrix:
+    - ENV=py27-django18
+    - ENV=py27-django19
+    - ENV=py27-django110
+    - ENV=py27-django111
+    - ENV=py33-django18
+    - ENV=py34-django18
+    - ENV=py34-django19
+    - ENV=py34-django110
+    - ENV=py34-django111
+    - ENV=py35-django18
+    - ENV=py35-django19
+    - ENV=py35-django110
+    - ENV=py35-django111
+    - ENV=py36-django111
+    - ENV=coverage
 
 install:
-  - pip install -U pip setuptools
-  - pip install flake8
-  - if [[ $DJANGO =~ = ]]; then
-    pip install --pre --quiet "Django=$DJANGO";
-    else
-    pip install --quiet "Django>=$DJANGO,<$DJANGO.99";
-    fi
-  - make install
+  - pip install tox
 
-script:
-  - make flake8
-  - make test
-
-after_script:
-  - if [ "$COVERAGE" == "true" ]; then
-    pip install --quiet python-coveralls;
-    make coverage;
-    coverage report;
-    coveralls --ignore-errors;
-    fi
-
-notifications:
-  email:
-    - hannes@5monkeys.se
+script: tox -e $ENV
