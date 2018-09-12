@@ -1,3 +1,5 @@
+from os.path import abspath, dirname, join, exists
+
 import django
 from django.core.management import call_command
 from django.test.client import RequestFactory
@@ -141,17 +143,14 @@ class EnumFieldTest(TestCase):
         self.assertEqual(form.fields['state'].choices[3][1].label, 'EMPTY')
 
     def test_migration(self):
-        if django.VERSION >= (1, 7):
-            from os.path import abspath, dirname, join, exists
+        app_dir = dirname(abspath(__file__))
+        self.assertTrue(exists(join(app_dir, 'models.py')))
 
-            app_dir = dirname(abspath(__file__))
-            self.assertTrue(exists(join(app_dir, 'models.py')))
+        migrations_dir = join(app_dir, 'migrations')
+        self.assertTrue(not exists(migrations_dir))
 
-            migrations_dir = join(app_dir, 'migrations')
-            self.assertTrue(not exists(migrations_dir))
-
-            call_command('makemigrations', 'tests')
-            call_command('sqlmigrate', 'tests', '0001')
+        call_command('makemigrations', 'tests')
+        call_command('sqlmigrate', 'tests', '0001')
 
 
 class EnumTest(TestCase):
