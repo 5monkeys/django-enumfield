@@ -67,6 +67,19 @@ class EnumFieldTest(TestCase):
         self.assertEqual(beer.state, BeerState.FIZZY)
         beer.save()
 
+    def test_enum_field_refresh_from_db(self):
+        lamp = Lamp.objects.create(state=LampState.OFF)
+        lamp2 = Lamp.objects.get(pk=lamp.id)
+
+        lamp.state = LampState.ON
+        lamp.save()
+
+        self.assertEqual(lamp.state, LampState.ON)
+        self.assertEqual(lamp2.state, LampState.OFF)
+
+        lamp2.refresh_from_db()
+        self.assertEqual(lamp2.state, LampState.ON)
+
     def test_magic_model_properties(self):
         beer = Beer.objects.create(style=BeerStyle.WEISSBIER)
         self.assertEqual(getattr(beer, 'get_style_display')(), 'WEISSBIER')
