@@ -1,6 +1,5 @@
 from os.path import abspath, dirname, join, exists
 
-import django
 from django.core.management import call_command
 from django.test.client import RequestFactory
 from django.db import IntegrityError
