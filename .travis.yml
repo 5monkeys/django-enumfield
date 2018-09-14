@@ -14,11 +14,18 @@ env:
     - ENV=py34-django19
     - ENV=py34-django110
     - ENV=py34-django111
+    - ENV=py34-django20
     - ENV=py35-django18
     - ENV=py35-django19
     - ENV=py35-django110
     - ENV=py35-django111
+    - ENV=py35-django20
+    - ENV=py35-django21
     - ENV=py36-django111
+    - ENV=py36-django20
+    - ENV=py36-django21
+    - ENV=py37-django20
+    - ENV=py37-django21
     - ENV=coverage
 
 install:
