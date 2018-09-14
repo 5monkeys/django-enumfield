@@ -28,7 +28,7 @@ env:
 matrix:
   include:
     - env: ENV=py33-django18
-      python: 3.3
+      python: 3.4
 
     - env: ENV=py36-django111
       python: 3.6
