@@ -18,7 +18,9 @@ class EnumField(models.IntegerField):
         self.enum = enum
         models.IntegerField.__init__(self, *args, **kwargs)
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
+    def contribute_to_class(
+        self, cls, name, private_only=False, virtual_only=models.NOT_PROVIDED
+    ):
         super(EnumField, self).contribute_to_class(cls, name)
         models.signals.class_prepared.connect(self._setup_validation, sender=cls)
 
