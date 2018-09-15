@@ -4,6 +4,8 @@ language: python
 python: 3.5
 
 env:
+  TOX_VERSION
+
   matrix:
     - ENV=py27-django18
     - ENV=py27-django19
@@ -27,9 +29,6 @@ env:
 
 matrix:
   include:
-    - env: ENV=py33-django18
-      python: 3.4
-
     - env: ENV=py36-django111
       python: 3.6
     - env: ENV=py36-django20

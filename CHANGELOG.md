@@ -4,6 +4,7 @@
 
 - Added Django 2.1 support
 - Added Python 3.7 support
+- Dropped Python 3.3 support
 
 ## [1.4.0]
 
