@@ -22,7 +22,7 @@ Provides an enumeration Django model field (using IntegerField) with reusable en
 Installation
 ------------
 
-Currently, `we test`__ Django versions 1.8-2.1 and Python versions 2.7,3.3-3.7.
+Currently, `we test`__ Django versions 1.8-2.1 and Python versions 2.7,3.4-3.7.
 
 Install ``django-enumfield`` in your Python environment:
 
