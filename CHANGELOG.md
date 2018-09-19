@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.5.0]
 
 - Added Django 2.1 support
 - Added Python 3.7 support
