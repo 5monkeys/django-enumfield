@@ -22,7 +22,7 @@ Provides an enumeration Django model field (using IntegerField) with reusable en
 Installation
 ------------
 
-Currently, `we test`__ Django versions 1.8-1.11 and Python versions 2.7,3.3-3.6.
+Currently, `we test`__ Django versions 1.8-2.1 and Python versions 2.7,3.4-3.7.
 
 Install ``django-enumfield`` in your Python environment:
 
@@ -115,7 +115,7 @@ These transitions state that a PersonStatus can only go to DEAD from ALIVE and t
         person.status = PersonStatus.REANIMATED
         person.save()
     except InvalidStatusOperationError:
-        print "Person status can not go from ALIVE to REANIMATED"
+        print("Person status can not go from ALIVE to REANIMATED")
 
 The Enum-class can also be used without the EnumField. This is very useful in Django form ChoiceFields.
 

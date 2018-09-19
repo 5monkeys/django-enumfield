@@ -16,7 +16,12 @@ def delete_migrations():
 
 def main():
     import warnings
-    warnings.filterwarnings('error', category=DeprecationWarning)
+    # Ignore deprecation warning caused by Django on 3.7 + 2.0
+    is_py37_django20 = (
+        sys.version_info[:2] == (3, 7) and django.VERSION[:2] == (2, 0)
+    )
+    module = r"(?!django).*" if is_py37_django20 else ""
+    warnings.filterwarnings('error', module=module, category=DeprecationWarning)
 
     delete_migrations()
 

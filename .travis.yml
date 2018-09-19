@@ -1,7 +1,7 @@
 sudo: false
 
 language: python
-python: 3.6
+python: 3.5
 
 env:
   matrix:
@@ -9,17 +9,39 @@ env:
     - ENV=py27-django19
     - ENV=py27-django110
     - ENV=py27-django111
-    - ENV=py33-django18
+
     - ENV=py34-django18
     - ENV=py34-django19
     - ENV=py34-django110
     - ENV=py34-django111
+    - ENV=py34-django20
+
     - ENV=py35-django18
     - ENV=py35-django19
     - ENV=py35-django110
     - ENV=py35-django111
-    - ENV=py36-django111
+    - ENV=py35-django20
+    - ENV=py35-django21
+
     - ENV=coverage
+
+matrix:
+  include:
+    - env: ENV=py36-django111
+      python: 3.6
+    - env: ENV=py36-django20
+      python: 3.6
+    - env: ENV=py36-django21
+      python: 3.6
+
+    - env: ENV=py37-django20
+      python: 3.7
+      sudo: true
+      dist: xenial
+    - env: ENV=py37-django21
+      python: 3.7
+      sudo: true
+      dist: xenial
 
 install:
   - pip install tox
