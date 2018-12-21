@@ -9,15 +9,14 @@ class EnumField(serializers.ChoiceField):
 
     def __init__(self, enum, **kwargs):
         self.enum = enum
-        self.name_as_value = kwargs.pop("name_as_value", False)
         choices = (
-            (
-                val.value if not self.name_as_value else enum.name(val.value),
-                val.label
-            )
-            for _, val in enum.choices()
+            (self.get_value(enum_value), enum_value.label)
+            for _, enum_value in enum.choices()
         )
         super().__init__(choices, **kwargs)
+
+    def get_value(self, enum_value):
+        return enum_value.value
 
     def to_internal_value(self, data):
         if isinstance(data, str) and data.isdigit():
@@ -33,6 +32,12 @@ class EnumField(serializers.ChoiceField):
         return value
 
     def to_representation(self, value):
-        enum = self.enum.get(value)
-        if enum:
-            return enum.value if not self.name_as_value else enum.name
+        enum_value = self.enum.get(value)
+        if enum_value:
+            return self.get_value(enum_value)
+
+
+class NamedEnumField(EnumField):
+
+    def get_value(self, enum_value):
+        return enum_value.name
