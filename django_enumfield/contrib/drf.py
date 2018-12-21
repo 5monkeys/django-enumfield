@@ -10,12 +10,12 @@ class EnumField(serializers.ChoiceField):
     def __init__(self, enum, **kwargs):
         self.enum = enum
         choices = (
-            (self.get_value(enum_value), enum_value.label)
+            (self.get_choice_value(enum_value), enum_value.label)
             for _, enum_value in enum.choices()
         )
         super().__init__(choices, **kwargs)
 
-    def get_value(self, enum_value):
+    def get_choice_value(self, enum_value):
         return enum_value.value
 
     def to_internal_value(self, data):
@@ -34,10 +34,10 @@ class EnumField(serializers.ChoiceField):
     def to_representation(self, value):
         enum_value = self.enum.get(value)
         if enum_value:
-            return self.get_value(enum_value)
+            return self.get_choice_value(enum_value)
 
 
 class NamedEnumField(EnumField):
 
-    def get_value(self, enum_value):
+    def get_choice_value(self, enum_value):
         return enum_value.name
