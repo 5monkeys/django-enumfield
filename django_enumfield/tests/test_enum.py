@@ -10,7 +10,7 @@ from django.utils import six
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 from django_enumfield.exceptions import InvalidStatusOperationError
-from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, Beer, BeerStyle, BeerState, LabelBeer
+from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, DimmableLampState, Beer, BeerStyle, BeerState, LabelBeer
 
 
 class EnumFieldTest(TestCase):
@@ -180,6 +180,14 @@ class EnumTest(TestCase):
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(list(PersonStatus.items())))
         self.assertTrue(all(key in PersonStatus.__dict__ for key in dict(list(PersonStatus.items()))))
+
+    def test_subclass_choices(self):
+        self.assertEqual(len(DimmableLampState.choices()), len(list(DimmableLampState.items())))
+        self.assertTrue(all(key in dir(DimmableLampState) for key in dict(list(DimmableLampState.items()))))
+        self.assertTrue(all(key in dir(DimmableLampState) for key in dict(list(LampState.items()))))
+        for key in dict(list(DimmableLampState.items())):
+            lamp = DimmableLampState.get(key)
+            self.assertTrue(lamp.value in DimmableLampState.labels, 'key %s not found' % lamp)
 
     def test_default(self):
         self.assertEqual(PersonStatus.default(), PersonStatus.UNBORN)

@@ -9,6 +9,20 @@ class LampState(Enum):
     OFF = 0
     ON = 1
 
+    labels = {
+        OFF: 'Off',
+        ON: 'On'
+    }
+
+
+class DimmableLampState(LampState):
+    DIMMED = 2
+
+    labels = LampState.labels.copy()
+    labels.update({
+        DIMMED: 'Dimmed'
+    })
+
 
 class Lamp(models.Model):
     state = EnumField(LampState)
