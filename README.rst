@@ -163,13 +163,3 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
 
 Rendering PersonForm in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
-
-Changelog
----------
-
-v2.0.0
-~~~~~~
-
-* The ``enumfield.enum.Enum`` class is now a subclass of the native ``IntEnum`` shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
-* Renamed ``_labels`` to ``__labels__``
-* Renamed ``_transitions`` to ``__transitions__``

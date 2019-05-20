@@ -1,5 +1,13 @@
 # Changelog
 
+
+## [2.0.0]
+
+* The ``enumfield.enum.Enum`` class is now a subclass of the native ``IntEnum`` shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
+* Renamed ``_labels`` to ``__labels__``
+* Renamed ``_transitions`` to ``__transitions__``
+* ``Enum.label()`` classmethod has been
+
 ## [1.5.0]
 
 - Added Django 2.1 support
