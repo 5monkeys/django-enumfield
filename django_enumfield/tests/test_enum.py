@@ -3,28 +3,35 @@ from os.path import abspath, dirname, join, exists
 from django.core.management import call_command
 from django.test.client import RequestFactory
 from django.db import IntegrityError
+from django.db.models.fields import NOT_PROVIDED
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
 from django.utils import six
 
 from django_enumfield.db.fields import EnumField
-from django_enumfield.enum import Enum
+from django_enumfield.enum import Enum, BlankEnum
 from django_enumfield.exceptions import InvalidStatusOperationError
-from django_enumfield.tests.models import Person, PersonStatus, Lamp, LampState, Beer, BeerStyle, BeerState, LabelBeer
+from django_enumfield.tests.models import Person, PersonStatus, Lamp, \
+    LampState, Beer, BeerStyle, BeerState, LabelBeer, PersonStatusDefault
 
 
 class EnumFieldTest(TestCase):
+
     def test_enum_field_init(self):
-        field = EnumField(PersonStatus)
-        self.assertEqual(field.default, PersonStatus.UNBORN)
-        self.assertEqual(len(PersonStatus.choices()), len(field.choices))
-        field = EnumField(PersonStatus, default=PersonStatus.ALIVE)
-        self.assertEqual(field.default, PersonStatus.ALIVE)
-        field = EnumField(PersonStatus, default=None)
-        self.assertEqual(field.default, None)
+        for enum, default in {
+            PersonStatus: NOT_PROVIDED,
+            PersonStatusDefault: PersonStatusDefault.UNBORN,
+        }.items():
+            field = EnumField(enum)
+            self.assertEqual(field.default, default)
+            self.assertEqual(len(enum.choices()), len(field.choices))
+            field = EnumField(enum, default=enum.ALIVE)
+            self.assertEqual(field.default, enum.ALIVE)
+            field = EnumField(enum, default=None)
+            self.assertEqual(field.default, None)
 
     def test_enum_field_save(self):
-        # Test model with EnumField WITHOUT _transitions
+        # Test model with EnumField WITHOUT __transitions__
 
         lamp = Lamp.objects.create()
         self.assertEqual(lamp.state, LampState.OFF)
@@ -35,18 +42,19 @@ class EnumFieldTest(TestCase):
 
         self.assertRaises(InvalidStatusOperationError, setattr, lamp, 'state', 99)
 
-        # Test model with EnumField WITH _transitions
+        # Test model with EnumField WITH __transitions__
         person = Person.objects.create()
         pk = person.pk
         self.assertEqual(person.status, PersonStatus.ALIVE)
         person.status = PersonStatus.DEAD
         person.save()
-        self.assertTrue(isinstance(person.status, int))
+        self.assertTrue(isinstance(person.status, PersonStatus))
         self.assertEqual(person.status, PersonStatus.DEAD)
 
         person = Person.objects.get(pk=pk)
         self.assertEqual(person.status, PersonStatus.DEAD)
         self.assertTrue(isinstance(person.status, int))
+        self.assertTrue(isinstance(person.status, PersonStatus))
 
         self.assertRaises(InvalidStatusOperationError, setattr, person, 'status', 99)
 
@@ -167,22 +175,34 @@ class EnumFieldTest(TestCase):
 
 class EnumTest(TestCase):
     def test_label(self):
-        self.assertEqual(PersonStatus.label(PersonStatus.ALIVE), six.text_type('ALIVE'))
+        self.assertEqual(PersonStatus.ALIVE.label, six.text_type('ALIVE'))
+        self.assertEqual(LabelBeer.STELLA.label,
+                         six.text_type('Stella Artois'))
 
     def test_name(self):
-        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.text_type('ALIVE'))
+        self.assertEqual(PersonStatus.ALIVE.name, six.text_type('ALIVE'))
+        self.assertEqual(LabelBeer.STELLA.name, six.text_type('STELLA'))
 
     def test_get(self):
-        self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum.Value))
-        self.assertTrue(isinstance(PersonStatus.get(six.text_type('ALIVE')), Enum.Value))
+        self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum))
+        self.assertTrue(isinstance(PersonStatus.get(six.text_type('ALIVE')), Enum))
         self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(six.text_type('ALIVE')))
 
     def test_choices(self):
-        self.assertEqual(len(PersonStatus.choices()), len(list(PersonStatus.items())))
-        self.assertTrue(all(key in PersonStatus.__dict__ for key in dict(list(PersonStatus.items()))))
+        self.assertEqual(len(PersonStatus.choices()), len(PersonStatus))
+        for value, member in PersonStatus.choices():
+            self.assertTrue(isinstance(value, int))
+            self.assertTrue(isinstance(member, PersonStatus))
+            self.assertTrue(PersonStatus.get(value) == member)
+        blank = PersonStatus.choices(blank=True)[0]
+        self.assertEqual(blank, (BlankEnum.BLANK.value, BlankEnum.BLANK))
 
     def test_default(self):
-        self.assertEqual(PersonStatus.default(), PersonStatus.UNBORN)
+        for enum, default in {
+            PersonStatus: None,
+            PersonStatusDefault: PersonStatusDefault.UNBORN,
+        }.items():
+            self.assertEqual(enum.default(), default)
 
     def test_field(self):
         self.assertTrue(isinstance(PersonStatus.field(), EnumField))
@@ -193,7 +213,11 @@ class EnumTest(TestCase):
         self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE))
 
     def test_labels(self):
-        self.assertEqual(LabelBeer.name(LabelBeer.JUPILER), LabelBeer.label(LabelBeer.JUPILER))
-        self.assertNotEqual(LabelBeer.name(LabelBeer.STELLA), LabelBeer.label(LabelBeer.STELLA))
-        self.assertTrue(isinstance(LabelBeer.label(LabelBeer.STELLA), six.string_types))
-        self.assertEqual(LabelBeer.label(LabelBeer.STELLA), six.text_type('Stella Artois'))
+        self.assertEqual(LabelBeer.JUPILER.name, LabelBeer.JUPILER.label)
+        self.assertNotEqual(LabelBeer.STELLA.name, LabelBeer.STELLA.label)
+        self.assertTrue(isinstance(LabelBeer.STELLA.label, six.string_types))
+        self.assertEqual(LabelBeer.STELLA.label,
+                         six.text_type('Stella Artois'))
+
+    def test_hash(self):
+        self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])

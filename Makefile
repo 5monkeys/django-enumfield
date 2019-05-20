@@ -4,7 +4,7 @@ test:
 
 .PHONY: flake8
 flake8:
-	flake8 --ignore=E501,F403 --max-complexity 12 django_enumfield
+	flake8 django_enumfield
 
 .PHONY: install
 install:

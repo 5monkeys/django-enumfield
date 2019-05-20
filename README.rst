@@ -68,6 +68,32 @@ Create an Enum-class and pass it as first argument to the Django model EnumField
     class Beer(models.Model):
         style = enum.EnumField(BeerStyle, default=BeerStyle.LAGER)
 
+You can also set default value on your enum class using ``__default__``
+attribute
+
+.. code:: python
+
+    class BeerStyle(enum.Enum):
+        LAGER = 0
+        STOUT = 1
+        WEISSBIER = 2
+
+        __default__ = LAGER
+
+
+    class Beer(models.Model):
+        style_default_lager = enum.EnumField(BeerStyle)
+        style_default_stout = enum.EnumField(BeerStyle, default=BeerStyle.STOUT)
+
+
+When you set __default__ attribute, you can access default value via
+``.default()`` method of your enum class
+
+.. code:: python
+
+    assert BeerStyle.default() == BeerStyle.LAGER
+
+
 .. code:: python
 
     Beer.objects.create(style=BeerStyle.STOUT)
@@ -81,7 +107,7 @@ You can use your own labels for Enum items
         CAT = 1
         DOG = 2
 
-        labels = {
+        __labels__ = {
             CAT: 'Cat',
             DOG: 'Dog'
         }
@@ -98,7 +124,7 @@ The Enum-class provides the possibility to use transition validation.
         DEAD = 2
         REANIMATED = 3
 
-        _transitions = {
+        __transitions__ = {
             DEAD: (ALIVE,),
             REANIMATED: (DEAD,)
         }
@@ -128,7 +154,7 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         MALE = 1
         FEMALE = 2
 
-        labels = {
+        __labels__ = {
             MALE: 'Male',
             FEMALE: 'Female',
         }
@@ -137,3 +163,13 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
 
 Rendering PersonForm in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
+
+Changelog
+---------
+
+v2.0.0
+~~~~~~
+
+* The ``enumfield.enum.Enum`` class is now a subclass of the native ``IntEnum`` shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
+* Renamed ``_labels`` to ``__labels__``
+* Renamed ``_transitions`` to ``__transitions__``

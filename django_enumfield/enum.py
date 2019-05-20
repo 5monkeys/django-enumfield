@@ -1,90 +1,96 @@
+from __future__ import absolute_import
+
+from enum import Enum as NativeEnum
+from enum import IntEnum as NativeIntEnum
+
 import logging
 
+from django.utils.translation import ugettext
 from django.utils import six
-from django.utils.encoding import python_2_unicode_compatible
 
 from django_enumfield.db.fields import EnumField
-
+from django_enumfield.exceptions import InvalidStatusOperationError
 
 logger = logging.getLogger(__name__)
 
 
-class EnumType(type):
-    """ Custom metaclass for Enum type """
+class BlankEnum(NativeEnum):
+    BLANK = ''
 
-    def __new__(mcs, *args):
-        """ Create enum values from all uppercase class attributes and store them in a dict on the Enum class."""
-        enum = super(EnumType, mcs).__new__(mcs, *args)
-        attributes = [k_v for k_v in list(enum.__dict__.items()) if k_v[0].isupper()]
-        labels = enum.__dict__.get('labels', {})
-
-        enum.values = {}
-        for attribute in attributes:
-            enum.values[attribute[1]] = enum.Value(attribute[0], attribute[1], labels.get(attribute[1]), enum)
-        return enum
+    @property
+    def label(self):
+        return ''
 
 
-class Enum(six.with_metaclass(EnumType)):
+class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
-    @python_2_unicode_compatible
-    class Value(object):
+    __labels__ = {}
+    __default__ = None
+    __transitions__ = {}
+
+    def __ge__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value >= other.value
+        return NotImplemented
+
+    def __gt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value > other.value
+        return NotImplemented
+
+    def __le__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value <= other.value
+        return NotImplemented
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value < other.value
+        return NotImplemented
+
+    def __eq__(self, other):
+        if isinstance(other, int):
+            return self.value == other
+        return super(Enum, self).__eq__(other)
+
+    def __hash__(self):
+        path, (val,), _ = self.deconstruct()
+        return hash('{}.{}'.format(path, val))
+
+    def deconstruct(self):
         """
-        A value represents a key-value pair with a uppercase name and a integer value:
-        GENDER = 1
-        "name" is a upper case string representing the class attribute
-        "label" is a translatable human readable version of "name"
-        "enum_type" is the value defined for the class attribute
+        See "Adding a deconstruct() method" in
+        https://docs.djangoproject.com/en/1.8/topics/migrations/
         """
-
-        def __init__(self, name, value, label, enum_type):
-            self.name = name
-            self.value = value
-            self._label = label
-            self.enum_type = enum_type
-
-        def __str__(self):
-            return six.text_type(self.label)
-
-        def __repr__(self):
-            return self.name
-
-        def __eq__(self, other):
-            if other and isinstance(other, Enum.Value):
-                return self.value == other.value
-            elif isinstance(other, six.string_types):
-                return type(other)(self.value) == other
-            else:
-                raise TypeError('Can not compare Enum with %s' % other.__class__.__name__)
-
-        @property
-        def label(self):
-            return self._label or self.name
-
-        def deconstruct(self):
-            path = self.__module__ + '.' + self.__class__.__name__
-            return path, (self.name, self.value, self.label, self.enum_type), {}
+        c = self.__class__
+        path = '{}.{}'.format(c.__module__, c.__name__)
+        return path, [self.value], {}
 
     @classmethod
     def choices(cls, blank=False):
         """ Choices for Enum
-        :return: List of tuples (<value>, <human-readable value>)
+        :return: List of tuples (<value>, <member>)
         :rtype: list
         """
-        choices = sorted([(key, value) for key, value in cls.values.items()], key=lambda x: x[0])
+        choices = sorted([(member.value, member) for member in cls],
+                         key=lambda x: x[0])
         if blank:
-            choices.insert(0, ('', Enum.Value('', None, '', cls)))
+            choices.insert(0, (BlankEnum.BLANK.value, BlankEnum.BLANK))
         return choices
 
     @classmethod
     def default(cls):
-        """ Default Enum value. Override this method if you need another default value.
+        """ Default Enum value. Set default value to `__default__` attribute
+        of your enum class or override this method if you need another
+        default value.
         Usage:
             IntegerField(choices=my_enum.choices(), default=my_enum.default(), ...
         :return Default value, which is the first one by default.
-        :rtype: int
+        :rtype: enum member
         """
-        return cls.choices()[0][0]
+        if cls.__default__ is not None:
+            return cls(cls.__default__)
 
     @classmethod
     def field(cls, **kwargs):
@@ -109,38 +115,34 @@ class Enum(six.with_metaclass(EnumType)):
         :rtype: Enum.Value
         """
         if isinstance(name_or_numeric, six.string_types):
-            name_or_numeric = getattr(cls, name_or_numeric.upper())
+            if name_or_numeric.isdigit():
+                name_or_numeric = int(name_or_numeric)
 
-        return cls.values.get(name_or_numeric)
+        if isinstance(name_or_numeric, six.text_type):
+            for member in cls:
+                if six.text_type(member.name) == name_or_numeric:
+                    return member
 
-    @classmethod
-    def name(cls, numeric):
-        """ Get attribute name for the matching Enum.Value
-        :param numeric: Enum value
-        :type numeric: int
-        :return: Attribute name for value
+        elif isinstance(name_or_numeric, int):
+            for member in cls:
+                if int(member.value) == name_or_numeric:
+                    return cls(name_or_numeric)
+
+        elif isinstance(name_or_numeric, cls):
+            return name_or_numeric
+
+        raise InvalidStatusOperationError(ugettext(six.text_type(
+            '{value!r} is not one of the available choices for enum {enum}.'
+        )).format(value=name_or_numeric, enum=cls))
+
+    @property
+    def label(self):
+        """ Get human readable label for the matching Enum.Value.
+        :return: label for value
         :rtype: str
         """
-        return cls.get(numeric).name
-
-    @classmethod
-    def label(cls, numeric):
-        """ Get human readable label for the matching Enum.Value.
-        :param numeric: Enum value
-        :type numeric: int
-        :return: label for value
-        :rtype: str or
-        """
-        return six.text_type(cls.get(numeric).label)
-
-    @classmethod
-    def items(cls):
-        """
-        :return: List of tuples consisting of every enum value in the form [('NAME', value), ...]
-        :rtype: list
-        """
-        items = [(value.name, key) for key, value in cls.values.items()]
-        return sorted(items, key=lambda x: x[1])
+        label = self.__class__.__labels__.get(self.value, self.name)
+        return six.text_type(label)
 
     @classmethod
     def is_valid_transition(cls, from_value, to_value):
@@ -152,8 +154,14 @@ class Enum(six.with_metaclass(EnumType)):
         :return: Success flag
         :rtype: bool
         """
+        if isinstance(from_value, cls):
+            from_value = from_value.value
+
+        if isinstance(to_value, cls):
+            to_value = to_value.value
         try:
-            return from_value == to_value or from_value in cls.transition_origins(to_value)
+            return from_value == to_value or not cls.__transitions__ or \
+                (from_value in cls.transition_origins(to_value))
         except KeyError:
             return False
 
@@ -164,7 +172,6 @@ class Enum(six.with_metaclass(EnumType)):
         :type to_value: int
         :rtype: list
         """
-        return cls._transitions[to_value]
-
-
-Value = Enum.Value
+        if isinstance(to_value, cls):
+            to_value = to_value.value
+        return cls.__transitions__.get(to_value, [])

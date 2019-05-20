@@ -49,6 +49,7 @@ def main():
             ROOT_URLCONF='django_enumfield.tests.urls',
             DEBUG=True,
             TEMPLATE_DEBUG=True,
+            MIDDLEWARE_CLASSES=[],
         )
 
     # Compatibility with Django 1.7's stricter initialization

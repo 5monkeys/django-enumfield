@@ -9,6 +9,8 @@ class LampState(Enum):
     OFF = 0
     ON = 1
 
+    __default__ = OFF
+
 
 class Lamp(models.Model):
     state = EnumField(LampState)
@@ -21,12 +23,22 @@ class PersonStatus(Enum):
     REANIMATED = 3
     VOID = 4
 
-    _transitions = {
+    __transitions__ = {
         UNBORN: (VOID,),
         ALIVE: (UNBORN,),
         DEAD: (UNBORN, ALIVE),
         REANIMATED: (DEAD,)
     }
+
+
+class PersonStatusDefault(Enum):
+    UNBORN = 0
+    ALIVE = 1
+    DEAD = 2
+    REANIMATED = 3
+    VOID = 4
+
+    __default__ = UNBORN
 
 
 class Person(models.Model):
@@ -43,11 +55,15 @@ class BeerStyle(Enum):
     STOUT = 1
     WEISSBIER = 2
 
+    __default__ = LAGER
+
 
 class BeerState(Enum):
     FIZZY = 0
     STALE = 1
     EMPTY = 2
+
+    __default__ = FIZZY
 
 
 class Beer(models.Model):
@@ -60,7 +76,7 @@ class LabelBeer(Enum):
     JUPILER = 1
     TYSKIE = 2
 
-    labels = {
+    __labels__ = {
         STELLA: _('Stella Artois'),
         TYSKIE: _('Browar Tyskie'),
     }
