@@ -53,7 +53,7 @@ class EnumField(models.IntegerField):
             return value.value
         return int(value)
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, *_):
         if value is not None:
             return self.enum.get(value)
 

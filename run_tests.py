@@ -34,9 +34,21 @@ def main():
                 'django.contrib.contenttypes',
                 'django.contrib.admin',
                 'django.contrib.sessions',
+                'django.contrib.messages',
                 'django_enumfield',
                 'django_enumfield.tests',
             ],
+            TEMPLATES=[{
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [],
+                'APP_DIRS': True,
+                'OPTIONS': {
+                    'context_processors': [
+                        'django.contrib.auth.context_processors.auth',
+                        'django.contrib.messages.context_processors.messages',
+                    ]
+                }
+            }],
             # Django replaces this, but it still wants it. *shrugs*
             DATABASE_ENGINE='django.db.backends.sqlite3',
             DATABASES={
@@ -50,6 +62,11 @@ def main():
             DEBUG=True,
             TEMPLATE_DEBUG=True,
             MIDDLEWARE_CLASSES=[],
+            MIDDLEWARE=[
+                'django.contrib.sessions.middleware.SessionMiddleware',
+                'django.contrib.messages.middleware.MessageMiddleware',
+                'django.contrib.auth.middleware.AuthenticationMiddleware'
+            ],
         )
 
     # Compatibility with Django 1.7's stricter initialization

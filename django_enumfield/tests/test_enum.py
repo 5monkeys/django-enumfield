@@ -1,8 +1,11 @@
+from contextlib import contextmanager
+from os import listdir
 from os.path import abspath, dirname, join, exists
 
 from django.core.management import call_command
+from django.db.backends.sqlite3.base import DatabaseWrapper
 from django.test.client import RequestFactory
-from django.db import IntegrityError
+from django.db import IntegrityError, connection
 from django.db.models.fields import NOT_PROVIDED
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
@@ -13,6 +16,39 @@ from django_enumfield.enum import Enum, BlankEnum
 from django_enumfield.exceptions import InvalidStatusOperationError
 from django_enumfield.tests.models import Person, PersonStatus, Lamp, \
     LampState, Beer, BeerStyle, BeerState, LabelBeer, PersonStatusDefault
+
+
+def _mock_disable_constraint_checking(self):
+    self.cursor().execute('PRAGMA foreign_keys = OFF')
+    return True
+
+
+def _mock_enable_constraint_checking(self):
+    self.needs_rollback, needs_rollback = False, self.needs_rollback
+    try:
+        self.cursor().execute('PRAGMA foreign_keys = ON')
+    finally:
+        self.needs_rollback = needs_rollback
+
+
+@contextmanager
+def patch_sqlite_connection():
+    if connection.vendor != 'sqlite':
+        yield
+        return
+
+    # Patch sqlite3 connection to drop foreign key constraints before
+    # running migration
+    old_enable = DatabaseWrapper.enable_constraint_checking
+    old_disable = DatabaseWrapper.disable_constraint_checking
+    DatabaseWrapper.enable_constraint_checking = _mock_enable_constraint_checking
+    DatabaseWrapper.disable_constraint_checking = _mock_disable_constraint_checking
+
+    try:
+        yield
+    finally:
+        DatabaseWrapper.enable_constraint_checking = old_enable
+        DatabaseWrapper.disable_constraint_checking = old_disable
 
 
 class EnumFieldTest(TestCase):
@@ -170,7 +206,8 @@ class EnumFieldTest(TestCase):
         self.assertTrue(not exists(migrations_dir))
 
         call_command('makemigrations', 'tests')
-        call_command('sqlmigrate', 'tests', '0001')
+        with patch_sqlite_connection():
+            call_command('sqlmigrate', 'tests', '0001')
 
 
 class EnumTest(TestCase):
