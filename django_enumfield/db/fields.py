@@ -119,4 +119,12 @@ class EnumField(models.IntegerField):
             path = "django.db.models.fields.IntegerField"
         if 'choices' in kwargs:
             del kwargs['choices']
+        if 'verbose_name' in kwargs:
+            del kwargs['verbose_name']
+        if 'default' in kwargs and isinstance(kwargs['default'], self.enum):
+            # The enum value cannot be deconstructed properly
+            # for migrations (on django <= 1.8).
+            # So we send the int value instead.
+            kwargs['default'] = kwargs['default'].value
+
         return name, path, args, kwargs
