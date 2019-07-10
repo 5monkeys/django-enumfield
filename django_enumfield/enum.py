@@ -27,30 +27,6 @@ class Enum(NativeIntEnum):
     __default__ = None
     __transitions__ = {}
 
-    def __ge__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value >= other.value
-        return NotImplemented
-
-    def __gt__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value > other.value
-        return NotImplemented
-
-    def __le__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value <= other.value
-        return NotImplemented
-
-    def __lt__(self, other):
-        if self.__class__ is other.__class__:
-            return self.value < other.value
-        return NotImplemented
-
-    def __eq__(self, other):
-        if isinstance(other, int):
-            return self.value == other
-        return super(Enum, self).__eq__(other)
 
     def __hash__(self):
         path, (val,), _ = self.deconstruct()
