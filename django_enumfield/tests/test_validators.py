@@ -3,13 +3,7 @@ import unittest
 from django.db import models
 
 from django_enumfield.exceptions import InvalidStatusOperationError
-from django_enumfield.tests.models import (
-    BeerStyle,
-    Lamp,
-    LampState,
-    Person,
-    PersonStatus,
-)
+from django_enumfield.tests.models import BeerStyle, Person, PersonStatus
 from django_enumfield.validators import validate_available_choice
 
 

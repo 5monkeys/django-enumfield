@@ -1,7 +1,5 @@
 from __future__ import absolute_import
 
-from enum import Enum
-
 from django.utils import six
 from django.utils.translation import gettext as _
 
