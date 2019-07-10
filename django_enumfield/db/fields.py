@@ -72,7 +72,7 @@ class EnumField(models.IntegerField):
         enum = self.enum
 
         def set_enum(self, new_value):
-            if isinstance(new_value, models.NOT_PROVIDED):
+            if new_value is models.NOT_PROVIDED:
                 new_value = None
             if hasattr(self, private_att_name):
                 # Fetch previous value from private enum attribute.
