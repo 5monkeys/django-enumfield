@@ -21,8 +21,6 @@ env:
     - ENV=py35-django20
     - ENV=py35-django21
 
-    - ENV=coverage
-
 matrix:
   include:
     - env: ENV=py35-django22
@@ -57,6 +55,11 @@ matrix:
       dist: xenial
     - env: ENV=py37-django22
       python: 3.7
+      sudo: true
+      dist: xenial
+
+    - env: ENV=coverage
+      python: 3.5
       sudo: true
       dist: xenial
 
