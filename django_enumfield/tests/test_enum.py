@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-from os import listdir
 from os.path import abspath, dirname, join, exists
 
 from django.core.management import call_command
