@@ -1,38 +1,47 @@
 from contextlib import contextmanager
-from os.path import abspath, dirname, join, exists
+from os.path import abspath, dirname, exists, join
 
 from django.core.management import call_command
-from django.db.backends.sqlite3.base import DatabaseWrapper
-from django.test.client import RequestFactory
 from django.db import IntegrityError, connection
+from django.db.backends.sqlite3.base import DatabaseWrapper
 from django.db.models.fields import NOT_PROVIDED
 from django.forms import ModelForm, TypedChoiceField
 from django.test import TestCase
+from django.test.client import RequestFactory
 from django.utils import six
 
 from django_enumfield.db.fields import EnumField
-from django_enumfield.enum import Enum, BlankEnum
+from django_enumfield.enum import BlankEnum, Enum
 from django_enumfield.exceptions import InvalidStatusOperationError
-from django_enumfield.tests.models import Person, PersonStatus, Lamp, \
-    LampState, Beer, BeerStyle, BeerState, LabelBeer, PersonStatusDefault
+from django_enumfield.tests.models import (
+    Beer,
+    BeerState,
+    BeerStyle,
+    LabelBeer,
+    Lamp,
+    LampState,
+    Person,
+    PersonStatus,
+    PersonStatusDefault,
+)
 
 
 def _mock_disable_constraint_checking(self):
-    self.cursor().execute('PRAGMA foreign_keys = OFF')
+    self.cursor().execute("PRAGMA foreign_keys = OFF")
     return True
 
 
 def _mock_enable_constraint_checking(self):
     self.needs_rollback, needs_rollback = False, self.needs_rollback
     try:
-        self.cursor().execute('PRAGMA foreign_keys = ON')
+        self.cursor().execute("PRAGMA foreign_keys = ON")
     finally:
         self.needs_rollback = needs_rollback
 
 
 @contextmanager
 def patch_sqlite_connection():
-    if connection.vendor != 'sqlite':
+    if connection.vendor != "sqlite":
         yield
         return
 
@@ -51,7 +60,6 @@ def patch_sqlite_connection():
 
 
 class EnumFieldTest(TestCase):
-
     def test_enum_field_init(self):
         for enum, default in {
             PersonStatus: NOT_PROVIDED,
@@ -75,7 +83,7 @@ class EnumFieldTest(TestCase):
         self.assertEqual(lamp.state, LampState.ON)
         self.assertEqual(lamp.state, 1)
 
-        self.assertRaises(InvalidStatusOperationError, setattr, lamp, 'state', 99)
+        self.assertRaises(InvalidStatusOperationError, setattr, lamp, "state", 99)
 
         # Test model with EnumField WITH __transitions__
         person = Person.objects.create()
@@ -91,13 +99,15 @@ class EnumFieldTest(TestCase):
         self.assertTrue(isinstance(person.status, int))
         self.assertTrue(isinstance(person.status, PersonStatus))
 
-        self.assertRaises(InvalidStatusOperationError, setattr, person, 'status', 99)
+        self.assertRaises(InvalidStatusOperationError, setattr, person, "status", 99)
 
         person = Person.objects.create(status=PersonStatus.ALIVE)
-        self.assertRaises(InvalidStatusOperationError, setattr, person, 'status', PersonStatus.UNBORN)
+        self.assertRaises(
+            InvalidStatusOperationError, setattr, person, "status", PersonStatus.UNBORN
+        )
 
         person.status = PersonStatus.DEAD
-        self.assertEqual(person.save(), 'Person.save')
+        self.assertEqual(person.save(), "Person.save")
 
         with self.assertRaises(InvalidStatusOperationError):
             person.status = PersonStatus.VOID
@@ -124,7 +134,7 @@ class EnumFieldTest(TestCase):
 
     def test_magic_model_properties(self):
         beer = Beer.objects.create(style=BeerStyle.WEISSBIER)
-        self.assertEqual(getattr(beer, 'get_style_display')(), 'WEISSBIER')
+        self.assertEqual(getattr(beer, "get_style_display")(), "WEISSBIER")
 
     def test_enum_field_del(self):
         lamp = Lamp.objects.create()
@@ -144,17 +154,17 @@ class EnumFieldTest(TestCase):
         class PersonForm(ModelForm):
             class Meta:
                 model = Person
-                fields = ('status',)
+                fields = ("status",)
 
         request_factory = RequestFactory()
-        request = request_factory.post('', data={'status': '2'})
+        request = request_factory.post("", data={"status": "2"})
         form = PersonForm(request.POST)
-        self.assertTrue(isinstance(form.fields['status'], TypedChoiceField))
+        self.assertTrue(isinstance(form.fields["status"], TypedChoiceField))
         self.assertTrue(form.is_valid())
         person = form.save()
         self.assertTrue(person.status, PersonStatus.DEAD)
 
-        request = request_factory.post('', data={'status': '99'})
+        request = request_factory.post("", data={"status": "99"})
         form = PersonForm(request.POST, instance=person)
         self.assertFalse(form.is_valid())
 
@@ -164,17 +174,17 @@ class EnumFieldTest(TestCase):
         class PersonForm(ModelForm):
             class Meta:
                 model = Person
-                fields = ('status',)
+                fields = ("status",)
 
         request_factory = RequestFactory()
-        request = request_factory.post('', data={'status': '2'})
+        request = request_factory.post("", data={"status": "2"})
         form = PersonForm(request.POST, instance=person)
-        self.assertTrue(isinstance(form.fields['status'], TypedChoiceField))
+        self.assertTrue(isinstance(form.fields["status"], TypedChoiceField))
         self.assertTrue(form.is_valid())
         form.save()
         self.assertTrue(person.status, PersonStatus.DEAD)
 
-        request = request_factory.post('', data={'status': '99'})
+        request = request_factory.post("", data={"status": "99"})
         form = PersonForm(request.POST, instance=person)
         self.assertFalse(form.is_valid())
 
@@ -182,47 +192,49 @@ class EnumFieldTest(TestCase):
         class BeerForm(ModelForm):
             class Meta:
                 model = Beer
-                fields = ('style', 'state')
+                fields = ("style", "state")
 
         form = BeerForm()
 
-        self.assertEqual(len(form.fields['style'].choices), 3)
-        self.assertEqual(form.fields['style'].choices[0][1].label, 'LAGER')
-        self.assertEqual(form.fields['style'].choices[1][1].label, 'STOUT')
-        self.assertEqual(form.fields['style'].choices[2][1].label, 'WEISSBIER')
+        self.assertEqual(len(form.fields["style"].choices), 3)
+        self.assertEqual(form.fields["style"].choices[0][1].label, "LAGER")
+        self.assertEqual(form.fields["style"].choices[1][1].label, "STOUT")
+        self.assertEqual(form.fields["style"].choices[2][1].label, "WEISSBIER")
 
-        self.assertEqual(len(form.fields['state'].choices), 4)
-        self.assertEqual(form.fields['state'].choices[0][1].label, '')
-        self.assertEqual(form.fields['state'].choices[1][1].label, 'FIZZY')
-        self.assertEqual(form.fields['state'].choices[2][1].label, 'STALE')
-        self.assertEqual(form.fields['state'].choices[3][1].label, 'EMPTY')
+        self.assertEqual(len(form.fields["state"].choices), 4)
+        self.assertEqual(form.fields["state"].choices[0][1].label, "")
+        self.assertEqual(form.fields["state"].choices[1][1].label, "FIZZY")
+        self.assertEqual(form.fields["state"].choices[2][1].label, "STALE")
+        self.assertEqual(form.fields["state"].choices[3][1].label, "EMPTY")
 
     def test_migration(self):
         app_dir = dirname(abspath(__file__))
-        self.assertTrue(exists(join(app_dir, 'models.py')))
+        self.assertTrue(exists(join(app_dir, "models.py")))
 
-        migrations_dir = join(app_dir, 'migrations')
+        migrations_dir = join(app_dir, "migrations")
         self.assertTrue(not exists(migrations_dir))
 
-        call_command('makemigrations', 'tests')
+        call_command("makemigrations", "tests")
         with patch_sqlite_connection():
-            call_command('sqlmigrate', 'tests', '0001')
+            call_command("sqlmigrate", "tests", "0001")
 
 
 class EnumTest(TestCase):
     def test_label(self):
-        self.assertEqual(PersonStatus.ALIVE.label, six.text_type('ALIVE'))
-        self.assertEqual(LabelBeer.STELLA.label,
-                         six.text_type('Stella Artois'))
+        self.assertEqual(PersonStatus.ALIVE.label, six.text_type("ALIVE"))
+        self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
 
     def test_name(self):
-        self.assertEqual(PersonStatus.ALIVE.name, six.text_type('ALIVE'))
-        self.assertEqual(LabelBeer.STELLA.name, six.text_type('STELLA'))
+        self.assertEqual(PersonStatus.ALIVE.name, six.text_type("ALIVE"))
+        self.assertEqual(LabelBeer.STELLA.name, six.text_type("STELLA"))
 
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum))
-        self.assertTrue(isinstance(PersonStatus.get(six.text_type('ALIVE')), Enum))
-        self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(six.text_type('ALIVE')))
+        self.assertTrue(isinstance(PersonStatus.get(six.text_type("ALIVE")), Enum))
+        self.assertEqual(
+            PersonStatus.get(PersonStatus.ALIVE),
+            PersonStatus.get(six.text_type("ALIVE")),
+        )
 
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(PersonStatus))
@@ -246,14 +258,15 @@ class EnumTest(TestCase):
     def test_equal(self):
         self.assertTrue(PersonStatus.ALIVE == PersonStatus.ALIVE)
         self.assertFalse(PersonStatus.ALIVE == PersonStatus.DEAD)
-        self.assertEqual(PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE))
+        self.assertEqual(
+            PersonStatus.get(PersonStatus.ALIVE), PersonStatus.get(PersonStatus.ALIVE)
+        )
 
     def test_labels(self):
         self.assertEqual(LabelBeer.JUPILER.name, LabelBeer.JUPILER.label)
         self.assertNotEqual(LabelBeer.STELLA.name, LabelBeer.STELLA.label)
         self.assertTrue(isinstance(LabelBeer.STELLA.label, six.string_types))
-        self.assertEqual(LabelBeer.STELLA.label,
-                         six.text_type('Stella Artois'))
+        self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
 
     def test_hash(self):
         self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])

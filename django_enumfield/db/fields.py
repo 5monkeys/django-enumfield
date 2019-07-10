@@ -1,10 +1,10 @@
 from enum import Enum
 
-from django.db import models
-from django.utils.functional import curry
-from django.utils.encoding import force_text
-from django import forms
 import django
+from django import forms
+from django.db import models
+from django.utils.encoding import force_text
+from django.utils.functional import curry
 
 from .. import validators
 
@@ -14,12 +14,13 @@ class EnumField(models.IntegerField):
         between Enum values and set field choices from the enum.
         EnumField(MyEnum, default=MyEnum.INITIAL)
     """
+
     default_error_messages = models.IntegerField.default_error_messages
 
     def __init__(self, enum, *args, **kwargs):
-        kwargs['choices'] = enum.choices()
+        kwargs["choices"] = enum.choices()
         if enum.default() is not None:
-            kwargs.setdefault('default', enum.default())
+            kwargs.setdefault("default", enum.default())
         self.enum = enum
         super(EnumField, self).__init__(self, *args, **kwargs)
 
@@ -36,8 +37,7 @@ class EnumField(models.IntegerField):
     ):
         super(EnumField, self).contribute_to_class(cls, name)
         if self.choices:
-            setattr(cls, 'get_%s_display' % self.name,
-                    curry(self._get_FIELD_display))
+            setattr(cls, "get_%s_display" % self.name, curry(self._get_FIELD_display))
         models.signals.class_prepared.connect(self._setup_validation, sender=cls)
 
     def _get_FIELD_display(self, cls):
@@ -69,7 +69,7 @@ class EnumField(models.IntegerField):
         The current value is set as '_enum_[att_name]' on the model instance.
         """
         att_name = self.get_attname()
-        private_att_name = '_enum_%s' % att_name
+        private_att_name = "_enum_%s" % att_name
         enum = self.enum
 
         def set_enum(self, new_value):
@@ -101,30 +101,34 @@ class EnumField(models.IntegerField):
 
     def validate(self, value, model_instance):
         super(EnumField, self).validate(value, model_instance)
-        validators.validate_valid_transition(self.enum, self.value_from_object(model_instance), value)
+        validators.validate_valid_transition(
+            self.enum, self.value_from_object(model_instance), value
+        )
 
     def formfield(self, **kwargs):
-        defaults = {'widget': forms.Select,
-                    'form_class': forms.TypedChoiceField,
-                    'coerce': int,
-                    'choices': self.enum.choices(blank=self.blank)}
+        defaults = {
+            "widget": forms.Select,
+            "form_class": forms.TypedChoiceField,
+            "coerce": int,
+            "choices": self.enum.choices(blank=self.blank),
+        }
         defaults.update(kwargs)
         return super(EnumField, self).formfield(**defaults)
 
     def deconstruct(self):
         name, path, args, kwargs = super(EnumField, self).deconstruct()
         if django.VERSION >= (1, 9):
-            kwargs['enum'] = self.enum
+            kwargs["enum"] = self.enum
         else:
             path = "django.db.models.fields.IntegerField"
-        if 'choices' in kwargs:
-            del kwargs['choices']
-        if 'verbose_name' in kwargs:
-            del kwargs['verbose_name']
-        if 'default' in kwargs and isinstance(kwargs['default'], self.enum):
+        if "choices" in kwargs:
+            del kwargs["choices"]
+        if "verbose_name" in kwargs:
+            del kwargs["verbose_name"]
+        if "default" in kwargs and isinstance(kwargs["default"], self.enum):
             # The enum value cannot be deconstructed properly
             # for migrations (on django <= 1.8).
             # So we send the int value instead.
-            kwargs['default'] = kwargs['default'].value
+            kwargs["default"] = kwargs["default"].value
 
         return name, path, args, kwargs

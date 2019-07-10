@@ -3,9 +3,7 @@ from rest_framework import serializers
 
 
 class EnumField(serializers.ChoiceField):
-    default_error_messages = {
-        "invalid_choice": _('"{input}" is not a valid choice.')
-    }
+    default_error_messages = {"invalid_choice": _('"{input}" is not a valid choice.')}
 
     def __init__(self, enum, **kwargs):
         self.enum = enum
@@ -38,6 +36,5 @@ class EnumField(serializers.ChoiceField):
 
 
 class NamedEnumField(EnumField):
-
     def get_choice_value(self, enum_value):
         return enum_value.name

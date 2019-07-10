@@ -27,7 +27,7 @@ class PersonStatus(Enum):
         UNBORN: (VOID,),
         ALIVE: (UNBORN,),
         DEAD: (UNBORN, ALIVE),
-        REANIMATED: (DEAD,)
+        REANIMATED: (DEAD,),
     }
 
 
@@ -42,12 +42,12 @@ class PersonStatusDefault(Enum):
 
 
 class Person(models.Model):
-    example = models.CharField(max_length=100, default='foo')
+    example = models.CharField(max_length=100, default="foo")
     status = EnumField(PersonStatus, default=PersonStatus.ALIVE)
 
     def save(self, *args, **kwargs):
         super(Person, self).save(*args, **kwargs)
-        return 'Person.save'
+        return "Person.save"
 
 
 class BeerStyle(Enum):
@@ -76,7 +76,4 @@ class LabelBeer(Enum):
     JUPILER = 1
     TYSKIE = 2
 
-    __labels__ = {
-        STELLA: _('Stella Artois'),
-        TYSKIE: _('Browar Tyskie'),
-    }
+    __labels__ = {STELLA: _("Stella Artois"), TYSKIE: _("Browar Tyskie")}

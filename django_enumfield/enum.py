@@ -1,12 +1,10 @@
 from __future__ import absolute_import
 
-from enum import Enum as NativeEnum
-from enum import IntEnum as NativeIntEnum
-
 import logging
+from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
 
-from django.utils.translation import ugettext
 from django.utils import six
+from django.utils.translation import ugettext
 
 from django_enumfield.db.fields import EnumField
 from django_enumfield.exceptions import InvalidStatusOperationError
@@ -15,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 
 class BlankEnum(NativeEnum):
-    BLANK = ''
+    BLANK = ""
 
     @property
     def label(self):
-        return ''
+        return ""
 
 
 class Enum(NativeIntEnum):
@@ -56,7 +54,7 @@ class Enum(NativeIntEnum):
 
     def __hash__(self):
         path, (val,), _ = self.deconstruct()
-        return hash('{}.{}'.format(path, val))
+        return hash("{}.{}".format(path, val))
 
     def deconstruct(self):
         """
@@ -64,7 +62,7 @@ class Enum(NativeIntEnum):
         https://docs.djangoproject.com/en/1.8/topics/migrations/
         """
         c = self.__class__
-        path = '{}.{}'.format(c.__module__, c.__name__)
+        path = "{}.{}".format(c.__module__, c.__name__)
         return path, [self.value], {}
 
     @classmethod
@@ -73,8 +71,7 @@ class Enum(NativeIntEnum):
         :return: List of tuples (<value>, <member>)
         :rtype: list
         """
-        choices = sorted([(member.value, member) for member in cls],
-                         key=lambda x: x[0])
+        choices = sorted([(member.value, member) for member in cls], key=lambda x: x[0])
         if blank:
             choices.insert(0, (BlankEnum.BLANK.value, BlankEnum.BLANK))
         return choices
@@ -131,9 +128,13 @@ class Enum(NativeIntEnum):
         elif isinstance(name_or_numeric, cls):
             return name_or_numeric
 
-        raise InvalidStatusOperationError(ugettext(six.text_type(
-            '{value!r} is not one of the available choices for enum {enum}.'
-        )).format(value=name_or_numeric, enum=cls))
+        raise InvalidStatusOperationError(
+            ugettext(
+                six.text_type(
+                    "{value!r} is not one of the available choices for enum {enum}."
+                )
+            ).format(value=name_or_numeric, enum=cls)
+        )
 
     @property
     def label(self):
@@ -146,7 +147,9 @@ class Enum(NativeIntEnum):
 
     @classmethod
     def is_valid_transition(cls, from_value, to_value):
-        """ Will check if to_value is a valid transition from from_value. Returns true if it is a valid transition.
+        """ Will check if to_value is a valid transition from from_value.
+        Returns true if it is a valid transition.
+
         :param from_value: Start transition point
         :param to_value: End transition point
         :type from_value: int
@@ -160,8 +163,11 @@ class Enum(NativeIntEnum):
         if isinstance(to_value, cls):
             to_value = to_value.value
         try:
-            return from_value == to_value or not cls.__transitions__ or \
-                (from_value in cls.transition_origins(to_value))
+            return (
+                from_value == to_value
+                or not cls.__transitions__
+                or (from_value in cls.transition_origins(to_value))
+            )
         except KeyError:
             return False
 
