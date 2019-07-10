@@ -1,6 +1,5 @@
 from enum import Enum
 
-import django
 from django import forms
 from django.db import models
 from django.utils.encoding import force_text
@@ -117,10 +116,7 @@ class EnumField(models.IntegerField):
 
     def deconstruct(self):
         name, path, args, kwargs = super(EnumField, self).deconstruct()
-        if django.VERSION >= (1, 9):
-            kwargs["enum"] = self.enum
-        else:
-            path = "django.db.models.fields.IntegerField"
+        kwargs["enum"] = self.enum
         if "choices" in kwargs:
             del kwargs["choices"]
         if "verbose_name" in kwargs:

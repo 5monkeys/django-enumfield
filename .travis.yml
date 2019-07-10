@@ -5,20 +5,11 @@ python: 3.5
 
 env:
   matrix:
-    - ENV=py27-django18
-    - ENV=py27-django19
-    - ENV=py27-django110
     - ENV=py27-django111
 
-    - ENV=py34-django18
-    - ENV=py34-django19
-    - ENV=py34-django110
     - ENV=py34-django111
     - ENV=py34-django20
 
-    - ENV=py35-django18
-    - ENV=py35-django19
-    - ENV=py35-django110
     - ENV=py35-django111
     - ENV=py35-django20
     - ENV=py35-django21
