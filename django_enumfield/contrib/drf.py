@@ -1,6 +1,8 @@
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
+from django_enumfield.exceptions import InvalidStatusOperationError
+
 
 class EnumField(serializers.ChoiceField):
     default_error_messages = {"invalid_choice": _('"{input}" is not a valid choice.')}
@@ -22,7 +24,7 @@ class EnumField(serializers.ChoiceField):
 
         try:
             value = self.enum.get(data).value
-        except AttributeError:
+        except InvalidStatusOperationError:
             if not self.required:
                 raise serializers.SkipField()
             self.fail("invalid_choice", input=data)
