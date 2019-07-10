@@ -6,6 +6,18 @@ test:
 flake8:
 	flake8 django_enumfield
 
+
+.PHONY: isort
+isort:
+	isort -rc django_enumfield
+
+.PHONY: black
+black:
+	find django_enumfield -name '*.py' | xargs black
+
+.PHONY: format
+format: black isort
+
 .PHONY: install
 install:
 	python setup.py install

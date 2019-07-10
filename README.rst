@@ -163,3 +163,12 @@ The Enum-class can also be used without the EnumField. This is very useful in Dj
         gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
 
 Rendering PersonForm in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
+
+
+Local Development Environment
+-----------------------------
+
+Make sure black and isort is installed in your env with ``pip install -e .[dev]``
+
+Before committing run ``make format`` to apply black and isort to all files to keep
+.

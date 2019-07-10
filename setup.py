@@ -89,11 +89,11 @@ setup(
     tests_require=['Django'],
     test_suite='run_tests.main',
     extras_require={
-        ':python_version=="2.6"': ['enum34'],
         ':python_version=="2.7"': ['enum34'],
         ':python_version=="3.0"': ['enum34'],
         ':python_version=="3.1"': ['enum34'],
         ':python_version=="3.2"': ['enum34'],
         ':python_version=="3.3"': ['enum34'],
+        'dev': ['black', 'isort'],
     }
 )
