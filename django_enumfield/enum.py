@@ -27,7 +27,6 @@ class Enum(NativeIntEnum):
     __default__ = None
     __transitions__ = {}
 
-
     def __hash__(self):
         path, (val,), _ = self.deconstruct()
         return hash("{}.{}".format(path, val))
@@ -96,13 +95,13 @@ class Enum(NativeIntEnum):
                 if six.text_type(member.name) == name_or_numeric:
                     return member
 
+        elif isinstance(name_or_numeric, cls):
+            return name_or_numeric
+
         elif isinstance(name_or_numeric, int):
             for member in cls:
                 if int(member.value) == name_or_numeric:
                     return cls(name_or_numeric)
-
-        elif isinstance(name_or_numeric, cls):
-            return name_or_numeric
 
         raise InvalidStatusOperationError(
             ugettext(
@@ -135,17 +134,14 @@ class Enum(NativeIntEnum):
         """
         if isinstance(from_value, cls):
             from_value = from_value.value
-
         if isinstance(to_value, cls):
             to_value = to_value.value
-        try:
-            return (
-                from_value == to_value
-                or not cls.__transitions__
-                or (from_value in cls.transition_origins(to_value))
-            )
-        except KeyError:
-            return False
+
+        return (
+            from_value == to_value
+            or not cls.__transitions__
+            or (from_value in cls.transition_origins(to_value))
+        )
 
     @classmethod
     def transition_origins(cls, to_value):

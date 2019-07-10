@@ -271,3 +271,8 @@ class EnumTest(TestCase):
 
     def test_hash(self):
         self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])
+
+    def test_comparison(self):
+        self.assertGreater(PersonStatus.ALIVE, PersonStatus.UNBORN.value)
+        self.assertLess(PersonStatus.REANIMATED, PersonStatus.VOID)
+        self.assertGreater(PersonStatus.ALIVE, PersonStatus.UNBORN.value)

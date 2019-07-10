@@ -66,14 +66,19 @@ class BeerState(Enum):
     __default__ = FIZZY
 
 
-class Beer(models.Model):
-    style = EnumField(BeerStyle)
-    state = EnumField(BeerState, null=True, blank=True)
-
-
 class LabelBeer(Enum):
     STELLA = 0
     JUPILER = 1
     TYSKIE = 2
 
     __labels__ = {STELLA: _("Stella Artois"), TYSKIE: _("Browar Tyskie")}
+
+
+def get_default_beer_label():
+    return LabelBeer.JUPILER
+
+
+class Beer(models.Model):
+    style = EnumField(BeerStyle)
+    state = EnumField(BeerState, null=True, blank=True)
+    label = EnumField(LabelBeer, default=get_default_beer_label)
