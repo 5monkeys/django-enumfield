@@ -42,6 +42,7 @@ def _mock_enable_constraint_checking(self):
 @contextmanager
 def patch_sqlite_connection():
     if connection.vendor != "sqlite":
+        # pragma: no cover
         yield
         return
 
