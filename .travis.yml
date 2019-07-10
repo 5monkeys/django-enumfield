@@ -3,6 +3,13 @@ sudo: false
 language: python
 python: 3.5
 
+cache:
+  apt: true
+
+addons:
+  apt_packages:
+    - sqlite3
+
 env:
   matrix:
     - ENV=py27-django111
