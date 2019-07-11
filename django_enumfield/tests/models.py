@@ -13,7 +13,7 @@ class LampState(Enum):
 
 
 class Lamp(models.Model):
-    state = EnumField(LampState)
+    state = EnumField(LampState, verbose_name="stately_state")
 
 
 class PersonStatus(Enum):
