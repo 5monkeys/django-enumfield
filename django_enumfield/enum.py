@@ -40,6 +40,15 @@ class Enum(NativeIntEnum):
         return path, [self.value], {}
 
     @classmethod
+    def items(cls):
+        """
+        :return: List of tuples consisting of every enum value in the form [('NAME', value), ...]
+        :rtype: list
+        """
+        items = [(member.name, member.value) for member in cls]
+        return sorted(items, key=lambda x: x[1])
+
+    @classmethod
     def choices(cls, blank=False):
         """ Choices for Enum
         :return: List of tuples (<value>, <member>)
