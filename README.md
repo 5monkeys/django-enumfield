@@ -1,5 +1,4 @@
-django-enumfield
-----------------
+# django-enumfield
 
 Provides an enumeration Django model field (using IntegerField) with reusable enums and transition validation.
 
