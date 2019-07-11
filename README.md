@@ -1,6 +1,6 @@
 # django-enumfield
 
-Provides an enumeration Django model field (using IntegerField) with reusable enums and transition validation.
+Provides an enumeration Django model field (using `IntegerField`) with reusable enums and transition validation.
 
 [![Build Status](https://travis-ci.org/5monkeys/django-enumfield.svg?branch=master)](https://travis-ci.org/5monkeys/django-enumfield)
 [![PyPi Version](https://img.shields.io/pypi/v/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
@@ -20,14 +20,16 @@ Install `django-enumfield` in your Python environment:
 $ pip install django-enumfield
 ```
 
-For use with Django versions prior to 1.8 use version `1.2.1`
+For use with Django versions prior to 1.8 use version 
+[`1.2.1`](https://github.com/5monkeys/django-enumfield/tree/1.2.1)
 
-For use with Django versions prior to 1.11 use version `1.5`
+For use with Django versions prior to 1.11 use version 
+[`1.5`](https://github.com/5monkeys/django-enumfield/tree/1.5)
 
 Usage
 -----
 
-Create an Enum-class and pass it as first argument to the Django model EnumField.
+Create an `Enum`-class and pass it as first argument to the Django model `EnumField`.
 
 ```python
 from django.db import models
@@ -83,7 +85,7 @@ Beer.objects.create(style=BeerStyle.STOUT)
 Beer.objects.filter(style=BeerStyle.STOUT)
 ```
 
-You can use your own labels for Enum items
+You can use your own labels for `Enum` items
 
 ```python
 from django_enumfield import enum
@@ -99,7 +101,7 @@ class Animals(enum.Enum):
     }
 ```
 
-The Enum-class provides the possibility to use transition validation.
+The `Enum`-class provides the possibility to use transition validation.
 
 ```python
 from django.db import models
@@ -132,7 +134,7 @@ else:
     person.save()
 ```
 
-The Enum-class can also be used without the EnumField. This is very useful in Django form ChoiceFields.
+The `Enum`-class can also be used without the `EnumField`. This is very useful in Django form `ChoiceField`s.
 
 ```python
 from django import forms
@@ -153,7 +155,7 @@ class PersonForm(forms.Form):
     gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
 ```
 
-Rendering PersonForm in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
+Rendering `PersonForm` in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
 
 
 Local Development Environment
