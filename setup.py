@@ -57,7 +57,7 @@ setup(
     name="django-enumfield",
     version=version,
     description="Custom Django field for using enumerations of named constants",
-    long_description=open(os.path.join(os.path.dirname(__file__), "README.rst"), encoding='utf-8').read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), "README.md"), encoding='utf-8').read(),
     author="Hannes Ljungberg",
     author_email="hannes@5monkeys.se",
     url="http://github.com/5monkeys/django-enumfield",
