@@ -8,6 +8,10 @@ import django
 from django.conf import settings
 
 
+def _format_version(version_tuple):
+    return ".".join(map(str, version_tuple))
+
+
 def delete_migrations():
     from os.path import exists, abspath, dirname, join
 
@@ -21,7 +25,7 @@ def delete_migrations():
 def main():
     print(
         "Running tests for Python {} and Django {}".format(
-            ".".join(map(str, sys.version_info)), django.__version__
+            _format_version(sys.version_info[:3]), _format_version(django.VERSION[:3])
         )
     )
     import warnings
