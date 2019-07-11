@@ -6,14 +6,14 @@ test:
 flake8:
 	flake8 django_enumfield
 
-
 .PHONY: isort
 isort:
-	isort -rc django_enumfield
+	isort -rc django_enumfield run_tests.py setup.py
 
 .PHONY: black
 black:
-	find django_enumfield -name '*.py' | xargs black
+	black django_enumfield run_tests.py setup.py
+
 
 .PHONY: format
 format: black isort
