@@ -56,6 +56,13 @@ BeerStyle(1)  # <BeerStyle.STOUT: 1>
 BeerStyle["LAGER"]  # <BeerStyle.LAGER: 0>
 ```
 
+For more information about Python 3 enums 
+(which our `Enum` inherits, `IntEnum` to be specific) 
+checkout the [docs](https://docs.python.org/3/library/enum.html).
+
+
+### Setting the default value
+
 You can also set default value on your enum class using `__default__`
 attribute
 
@@ -85,9 +92,12 @@ Beer.objects.create(style=BeerStyle.STOUT)
 Beer.objects.filter(style=BeerStyle.STOUT)
 ```
 
+### Labels
+
 You can use your own labels for `Enum` items
 
 ```python
+from django.utils.translation import ugettext_lazy
 from django_enumfield import enum
 
 
@@ -96,10 +106,12 @@ class Animals(enum.Enum):
     DOG = 2
 
     __labels__ = {
-        CAT: "Cat",
-        DOG: "Dog"
+        CAT: ugettext_lazy("Cat"),
+        DOG: ugettext_lazy("Dog"),
     }
 ```
+
+### Validate transitions
 
 The `Enum`-class provides the possibility to use transition validation.
 
@@ -115,8 +127,8 @@ class PersonStatus(enum.Enum):
     REANIMATED = 3
 
     __transitions__ = {
-        DEAD: (ALIVE,),
-        REANIMATED: (DEAD,)
+        DEAD: (ALIVE,),  # Can go from ALIVE to DEAD
+        REANIMATED: (DEAD,)  # Can go from DEAD to REANIMATED
     }
 
 
@@ -133,6 +145,8 @@ else:
     # All good
     person.save()
 ```
+
+### In forms
 
 The `Enum`-class can also be used without the `EnumField`. This is very useful in Django form `ChoiceField`s.
 
