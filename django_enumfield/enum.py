@@ -80,10 +80,13 @@ class Enum(NativeIntEnum):
         return EnumField(cls, **kwargs)
 
     @classmethod
-    def get(cls, name_or_numeric):
+    def get(cls, name_or_numeric, default=None):
         """ Get Enum.Value object matching the value argument.
         :param name_or_numeric: Integer value or attribute name
         :type name_or_numeric: int or str
+        :param default: The default to return if the value passed is not
+            a valid enum value
+        :type default: Any
         :rtype: Enum.Value
         """
         if isinstance(name_or_numeric, six.string_types):
@@ -103,13 +106,7 @@ class Enum(NativeIntEnum):
                 if int(member.value) == name_or_numeric:
                     return cls(name_or_numeric)
 
-        raise InvalidStatusOperationError(
-            ugettext(
-                six.text_type(
-                    "{value!r} is not one of the available choices for enum {enum}."
-                )
-            ).format(value=name_or_numeric, enum=cls)
-        )
+        return default
 
     @property
     def label(self):
