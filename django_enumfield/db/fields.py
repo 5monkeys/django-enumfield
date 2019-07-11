@@ -21,11 +21,11 @@ class EnumField(models.IntegerField):
     default_error_messages = models.IntegerField.default_error_messages
 
     def __init__(self, enum, *args, **kwargs):
-        kwargs["choices"] = enum.choices()
+        kwargs.setdefault("choices", enum.choices())
         if enum.default() is not None:
             kwargs.setdefault("default", enum.default())
         self.enum = enum
-        super(EnumField, self).__init__(self, *args, **kwargs)
+        super(EnumField, self).__init__(*args, **kwargs)
 
     def get_default(self):
         if callable(self.default):
