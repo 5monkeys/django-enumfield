@@ -127,9 +127,11 @@ These transitions state that a PersonStatus can only go to DEAD from ALIVE and t
     person = Person.objects.create(status=PersonStatus.ALIVE)
     try:
         person.status = PersonStatus.REANIMATED
-        person.save()
     except InvalidStatusOperationError:
         print("Person status can not go from ALIVE to REANIMATED")
+    else:
+        # All good
+        person.save()
 
 The Enum-class can also be used without the EnumField. This is very useful in Django form ChoiceFields.
 
