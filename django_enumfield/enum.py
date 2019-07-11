@@ -4,12 +4,11 @@ import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
 
 from django.utils import six
-from django.utils.translation import ugettext
 
 from django_enumfield.db.fields import EnumField
-from django_enumfield.exceptions import InvalidStatusOperationError
 
 logger = logging.getLogger(__name__)
+RAISE = object()
 
 
 class BlankEnum(NativeEnum):
@@ -89,22 +88,19 @@ class Enum(NativeIntEnum):
         :type default: Any
         :rtype: Enum.Value
         """
-        if isinstance(name_or_numeric, six.string_types):
-            if name_or_numeric.isdigit():
-                name_or_numeric = int(name_or_numeric)
-
-        if isinstance(name_or_numeric, six.text_type):
-            for member in cls:
-                if six.text_type(member.name) == name_or_numeric:
-                    return member
-
-        elif isinstance(name_or_numeric, cls):
+        if isinstance(name_or_numeric, cls):
             return name_or_numeric
 
-        elif isinstance(name_or_numeric, int):
-            for member in cls:
-                if int(member.value) == name_or_numeric:
-                    return cls(name_or_numeric)
+        if isinstance(name_or_numeric, int):
+            try:
+                return cls(name_or_numeric)
+            except ValueError:
+                pass
+        elif isinstance(name_or_numeric, six.string_types):
+            try:
+                return cls[name_or_numeric]
+            except KeyError:
+                pass
 
         return default
 

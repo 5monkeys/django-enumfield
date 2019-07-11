@@ -1,7 +1,6 @@
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
-
-from django_enumfield.exceptions import InvalidStatusOperationError
 
 
 class EnumField(serializers.ChoiceField):
@@ -19,12 +18,12 @@ class EnumField(serializers.ChoiceField):
         return enum_value.value
 
     def to_internal_value(self, data):
-        if isinstance(data, str) and data.isdigit():
+        if isinstance(data, six.string_types) and data.isdigit():
             data = int(data)
 
         try:
             value = self.enum.get(data).value
-        except InvalidStatusOperationError:
+        except AttributeError:  # .get() returned None
             if not self.required:
                 raise serializers.SkipField()
             self.fail("invalid_choice", input=data)

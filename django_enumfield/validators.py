@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from django.utils import six
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext as _, ugettext
 
 from django_enumfield.exceptions import InvalidStatusOperationError
 
@@ -28,8 +28,18 @@ def validate_valid_transition(enum, from_value, to_value):
 def validate_available_choice(enum, to_value):
     """
     Validate that to_value is defined as a value in enum.
+    Pass by name is not supported.
     """
     if to_value is None:
         return
 
-    enum.get(to_value)
+    try:
+        enum(to_value)
+    except ValueError:
+        raise InvalidStatusOperationError(
+            ugettext(
+                six.text_type(
+                    "{value!r} is not one of the available choices " "for enum {enum}."
+                )
+            ).format(value=to_value, enum=enum)
+        )

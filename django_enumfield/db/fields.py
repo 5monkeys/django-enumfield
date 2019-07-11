@@ -2,8 +2,12 @@ from enum import Enum
 
 from django import forms
 from django.db import models
+from django.utils import six
 from django.utils.encoding import force_text
 from django.utils.functional import curry
+from django.utils.translation import ugettext
+
+from django_enumfield.exceptions import InvalidStatusOperationError
 
 from .. import validators
 
@@ -81,8 +85,24 @@ class EnumField(models.IntegerField):
                 # First setattr no previous value on instance.
                 old_value = new_value
             # Update private enum attribute with new value
-            if new_value is not None and not isinstance(new_value, Enum):
-                new_value = enum.get(new_value)
+            if new_value is not None and not isinstance(new_value, enum):
+                if isinstance(new_value, Enum):
+                    raise TypeError(
+                        "Invalid Enum class passed. Passed {}, expected {}".format(
+                            new_value.__class__.__name__, enum.__name__
+                        )
+                    )
+                try:
+                    new_value = enum(new_value)
+                except ValueError:
+                    raise InvalidStatusOperationError(
+                        ugettext(
+                            six.text_type(
+                                "{value!r} is not one of the available choices "
+                                "for enum {enum}."
+                            )
+                        ).format(value=new_value, enum=enum)
+                    )
             setattr(self, private_att_name, new_value)
             self.__dict__[att_name] = new_value
             # Run validation for new value.
