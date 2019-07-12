@@ -28,7 +28,7 @@ class EnumField(models.IntegerField):
         super(EnumField, self).__init__(*args, **kwargs)
 
     def get_default(self):
-        if callable(self.default):
+        if self.has_default() and callable(self.default):
             return self.default()
         return self.default
 
