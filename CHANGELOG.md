@@ -7,8 +7,10 @@
 shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
 - Renamed `_labels` to `__labels__`
 - Renamed `_transitions` to `__transitions__`
-- Removed the classmethods `Enum.name()` and `Enum.label()` since they are now 
-over-shadowed by properties on the enum instance.
+- Renamed the classmethods `Enum.name()` to `Enum.get_name()` and 
+`Enum.label()` to `Enum.get_label()` since they are now over-shadowed by 
+properties on the enum instance. Also they return None if the enum value was not found
+instead of raising `AttributeError`
 - Converted README.rst to markdown (README.md)
 - Added Django 2.2 support
 - Dropped support for Django < 1.11

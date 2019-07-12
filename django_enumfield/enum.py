@@ -113,6 +113,28 @@ class Enum(NativeIntEnum):
 
         return default
 
+    @classmethod
+    def get_name(cls, name_or_numeric):
+        """ Get Enum.Value name matching the value argument.
+        :param name_or_numeric: Integer value or attribute name
+        :type name_or_numeric: int or str
+        :return: The name or None if not found
+        """
+        value = cls.get(name_or_numeric)
+        if value is not None:
+            return value.name
+
+    @classmethod
+    def get_label(cls, name_or_numeric):
+        """ Get Enum.Value label matching the value argument.
+        :param name_or_numeric: Integer value or attribute name
+        :type name_or_numeric: int or str
+        :return: The label or None if not found
+        """
+        value = cls.get(name_or_numeric)
+        if value is not None:
+            return value.label
+
     @property
     def label(self):
         """ Get human readable label for the matching Enum.Value.
