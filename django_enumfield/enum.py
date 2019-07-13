@@ -19,12 +19,28 @@ class BlankEnum(NativeEnum):
         return ""
 
 
+class ClassmethodShortcut(object):
+    def __init__(self, property_name, to_function):
+        self.property_name = property_name
+        self.to_function = to_function
+
+    def __get__(self, instance, owner):
+        if instance is None:
+            # class
+            return getattr(owner, self.to_function)
+        return getattr(instance, self.property_name)
+
+
 class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
     __labels__ = {}
     __default__ = None
     __transitions__ = {}
+
+    # Hack to make both Enum.VALUE.name and Enum.name(Enum.VALUE) available
+    name = ClassmethodShortcut("_name_", "get_name")
+    label = ClassmethodShortcut("_label", "get_label")
 
     def __hash__(self):
         path, (val,), _ = self.deconstruct()
@@ -42,7 +58,8 @@ class Enum(NativeIntEnum):
     @classmethod
     def items(cls):
         """
-        :return: List of tuples consisting of every enum value in the form [('NAME', value), ...]
+        :return: List of tuples consisting of every enum value in the form
+            [('NAME', value), ...]
         :rtype: list
         """
         items = [(member.name, member.value) for member in cls]
@@ -133,10 +150,10 @@ class Enum(NativeIntEnum):
         """
         value = cls.get(name_or_numeric)
         if value is not None:
-            return value.label
+            return value._label
 
     @property
-    def label(self):
+    def _label(self):
         """ Get human readable label for the matching Enum.Value.
         :return: label for value
         :rtype: str

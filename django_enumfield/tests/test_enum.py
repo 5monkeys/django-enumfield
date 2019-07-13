@@ -228,6 +228,13 @@ class EnumTest(TestCase):
         self.assertEqual(PersonStatus.ALIVE.name, six.text_type("ALIVE"))
         self.assertEqual(LabelBeer.STELLA.name, six.text_type("STELLA"))
 
+        # Check that the old classmethod still works. Kept for backward compatibility.
+        self.assertEqual(
+            LabelBeer.name(LabelBeer.STELLA.value), six.text_type("STELLA")
+        )
+        self.assertEqual(PersonStatus.name("ALIVE"), six.text_type("ALIVE"))
+        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.text_type("ALIVE"))
+
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum))
         self.assertTrue(isinstance(PersonStatus.get(six.text_type("ALIVE")), Enum))
@@ -235,6 +242,22 @@ class EnumTest(TestCase):
             PersonStatus.get(PersonStatus.ALIVE),
             PersonStatus.get(six.text_type("ALIVE")),
         )
+
+        # Returns `default` if not found
+        self.assertEqual(PersonStatus.get("ALIVEISH", "?"), "?")
+        self.assertEqual(PersonStatus.get(99, "??"), "??")
+
+    def test_get_name(self):
+        self.assertEqual(PersonStatus.get_name(PersonStatus.ALIVE), "ALIVE")
+        self.assertEqual(PersonStatus.get_name(PersonStatus.ALIVE.value), "ALIVE")
+        self.assertEqual(PersonStatus.get_name(PersonStatus.ALIVE.name), "ALIVE")
+        self.assertIsNone(PersonStatus.get_name(89))
+
+    def test_get_label(self):
+        self.assertEqual(LabelBeer.get_label(LabelBeer.STELLA), "Stella Artois")
+        self.assertEqual(LabelBeer.get_label(LabelBeer.STELLA.value), "Stella Artois")
+        self.assertEqual(LabelBeer.get_label(LabelBeer.STELLA.name), "Stella Artois")
+        self.assertIsNone(LabelBeer.get_label(89))
 
     def test_choices(self):
         self.assertEqual(len(PersonStatus.choices()), len(PersonStatus))
@@ -244,6 +267,13 @@ class EnumTest(TestCase):
             self.assertTrue(PersonStatus.get(value) == member)
         blank = PersonStatus.choices(blank=True)[0]
         self.assertEqual(blank, (BlankEnum.BLANK.value, BlankEnum.BLANK))
+
+    def test_items(self):
+        self.assertEqual(len(PersonStatus.items()), len(PersonStatus))
+        for name, value in PersonStatus.items():
+            self.assertTrue(isinstance(value, int))
+            self.assertTrue(isinstance(name, six.string_types))
+            self.assertEqual(PersonStatus.get(value), PersonStatus.get(name))
 
     def test_default(self):
         for enum, default in {
@@ -267,6 +297,12 @@ class EnumTest(TestCase):
         self.assertNotEqual(LabelBeer.STELLA.name, LabelBeer.STELLA.label)
         self.assertTrue(isinstance(LabelBeer.STELLA.label, six.string_types))
         self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
+
+        # Check that the old classmethod still works. Kept for backward compatibility.
+        self.assertEqual(
+            LabelBeer.label(LabelBeer.STELLA.value), six.text_type("Stella Artois")
+        )
+        self.assertEqual(LabelBeer.label("STELLA"), six.text_type("Stella Artois"))
 
     def test_hash(self):
         self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])
