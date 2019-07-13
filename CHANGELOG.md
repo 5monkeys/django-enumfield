@@ -3,14 +3,20 @@
 
 ## [2.0.0]
 
+**Many breaking changes this release.**
+
 - The ``enumfield.enum.Enum`` class is now a subclass of the native `IntEnum` 
 shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
-- Renamed `_labels` to `__labels__`
+- Renamed `labels` to `__labels__`
 - Renamed `_transitions` to `__transitions__`
-- Renamed the classmethods `Enum.name()` to `Enum.get_name()` and 
-`Enum.label()` to `Enum.get_label()` since they are now over-shadowed by 
-properties on the enum instance. Also they return None if the enum value was not found
-instead of raising `AttributeError`
+- Added aliases for the classmethods `Enum.name()` as `Enum.get_name()` and 
+`Enum.label()` as `Enum.get_label()`.  Access the old way 
+(`Enum.name()` and `Enum.label()`) is still supported though, but the new names 
+are easier to be discovered by IDEs for example.
+- `Enum.get_label()` and `Enum.get_name()` now return None if the enum value was 
+not found instead of raising `AttributeError`
+- `EnumField` does not automatically set a default which is the first enum value anymore.
+Use `Enum.__default__ = VALUE` or pass it explicitly to `EnumField` 
 - Converted README.rst to markdown (README.md)
 - Added Django 2.2 support
 - Dropped support for Django < 1.11

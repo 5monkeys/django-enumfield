@@ -47,13 +47,17 @@ class Beer(models.Model):
     
 
 # Use .get to get enum values from either name or ints
-BeerStyle.get("LAGER")  # <BeerStyle.LAGER: 0>
-BeerStyle.get(1)  # <BeerStyle.STOUT: 1>
-BeerStyle.get(BeerStyle.WEISSBIER)  # <BeerStyle.WEISSBIER: 2>, of course
+print(BeerStyle.get("LAGER"))  # <BeerStyle.LAGER: 0>
+print(BeerStyle.get(1))  # <BeerStyle.STOUT: 1>
+print(BeerStyle.get(BeerStyle.WEISSBIER))  # <BeerStyle.WEISSBIER: 2>
 
 # It's also possible to use the normal enum way to get the value
-BeerStyle(1)  # <BeerStyle.STOUT: 1>
-BeerStyle["LAGER"]  # <BeerStyle.LAGER: 0>
+print(BeerStyle(1))  # <BeerStyle.STOUT: 1>
+print(BeerStyle["LAGER"])  # <BeerStyle.LAGER: 0>
+
+# The enum value has easy access to their value and name
+print(BeerStyle.LAGER.value)  # 0
+print(BeerStyle.LAGER.name)  # "LAGER"
 ```
 
 For more information about Python 3 enums 
@@ -104,11 +108,20 @@ from django_enumfield import enum
 class Animals(enum.Enum):
     CAT = 1
     DOG = 2
+    SHARK = 3
 
     __labels__ = {
         CAT: ugettext_lazy("Cat"),
         DOG: ugettext_lazy("Dog"),
     }
+    
+
+print(Animals.CAT.label)  # "Cat"
+print(Animals.SHARK.label)  # "SHARK"
+
+# There's also classmethods for getting the label 
+print(Animals.get_label(2))  # "Dog"
+print(Animals.get_label("DOG"))  # "Dog"
 ```
 
 ### Validate transitions
