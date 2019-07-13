@@ -311,3 +311,15 @@ class EnumTest(TestCase):
         self.assertGreater(PersonStatus.ALIVE, PersonStatus.UNBORN.value)
         self.assertLess(PersonStatus.REANIMATED, PersonStatus.VOID)
         self.assertGreater(PersonStatus.ALIVE, PersonStatus.UNBORN.value)
+
+    def test_values(self):
+        self.assertEqual(
+            PersonStatus.values,
+            {
+                PersonStatus.UNBORN.value: PersonStatus.UNBORN,
+                PersonStatus.ALIVE.value: PersonStatus.ALIVE,
+                PersonStatus.DEAD.value: PersonStatus.DEAD,
+                PersonStatus.REANIMATED.value: PersonStatus.REANIMATED,
+                PersonStatus.VOID.value: PersonStatus.VOID,
+            },
+        )

@@ -4,6 +4,7 @@ import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
 
 from django.utils import six
+from django.utils.decorators import classproperty
 
 from django_enumfield.db.fields import EnumField
 
@@ -41,6 +42,19 @@ class Enum(NativeIntEnum):
     # Hack to make both Enum.VALUE.name and Enum.name(Enum.VALUE) available
     name = ClassmethodShortcut("_name_", "get_name")
     label = ClassmethodShortcut("_label", "get_label")
+
+    @classproperty
+    def values(cls):
+        return {member.value: member for member in cls}
+
+    @property
+    def _label(self):
+        """ Get human readable label for the matching Enum.Value.
+        :return: label for value
+        :rtype: str
+        """
+        label = self.__class__.__labels__.get(self.value, self.name)
+        return six.text_type(label)
 
     def __hash__(self):
         path, (val,), _ = self.deconstruct()
@@ -151,15 +165,6 @@ class Enum(NativeIntEnum):
         value = cls.get(name_or_numeric)
         if value is not None:
             return value._label
-
-    @property
-    def _label(self):
-        """ Get human readable label for the matching Enum.Value.
-        :return: label for value
-        :rtype: str
-        """
-        label = self.__class__.__labels__.get(self.value, self.name)
-        return six.text_type(label)
 
     @classmethod
     def is_valid_transition(cls, from_value, to_value):
