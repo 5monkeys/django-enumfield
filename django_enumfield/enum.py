@@ -62,10 +62,6 @@ class Enum(NativeIntEnum):
         label = self.__class__.__labels__.get(self.value, self.name)
         return six.text_type(label)
 
-    def __hash__(self):
-        path, (val,), _ = self.deconstruct()
-        return hash("{}.{}".format(path, val))
-
     def deconstruct(self):
         """
         See "Adding a deconstruct() method" in
