@@ -20,6 +20,8 @@ Install `django-enumfield` in your Python environment:
 $ pip install django-enumfield
 ```
 
+**Upgrading from django-enumfield 1.x?** [See the migration guide](docs/migrate-to-20.md) 
+
 For use with Django versions prior to 1.8 use version 
 [`1.2.1`](https://github.com/5monkeys/django-enumfield/tree/1.2.1)
 
