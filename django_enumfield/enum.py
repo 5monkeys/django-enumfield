@@ -21,14 +21,14 @@ class BlankEnum(NativeEnum):
 
 
 class ClassmethodShortcut(object):
-    def __init__(self, property_name, to_function):
+    def __init__(self, property_name, class_method):
         self.property_name = property_name
-        self.to_function = to_function
+        self.class_method = class_method
 
     def __get__(self, instance, owner):
         if instance is None:
             # class
-            return getattr(owner, self.to_function)
+            return getattr(owner, self.class_method)
         return getattr(instance, self.property_name)
 
 
