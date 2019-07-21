@@ -44,6 +44,12 @@ class Enum(NativeIntEnum):
     label = ClassmethodShortcut("_label", "get_label")
 
     @classproperty
+    def do_not_call_in_templates(self):
+        # Fix for Django templates so that any lookups of enums won't fail
+        # More info: https://stackoverflow.com/questions/35953132/how-to-access-enum-types-in-django-templates
+        return True
+
+    @classproperty
     def values(cls):
         return {member.value: member for member in cls}
 
