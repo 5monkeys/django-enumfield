@@ -46,7 +46,7 @@ class Enum(NativeIntEnum):
     @classproperty
     def do_not_call_in_templates(self):
         # Fix for Django templates so that any lookups of enums won't fail
-        # More info: https://stackoverflow.com/questions/35953132/how-to-access-enum-types-in-django-templates
+        # More info: https://stackoverflow.com/questions/35953132/how-to-access-enum-types-in-django-templates  # noqa: E501
         return True
 
     @classproperty
