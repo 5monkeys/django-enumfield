@@ -90,7 +90,11 @@ setup(
     cmdclass=cmdclasses,
     data_files=data_files,
     packages=packages,
-    tests_require=["Django", "djangorestframework"],
+    tests_require=[
+        "Django",
+        "djangorestframework",
+        'djangorestframework<3.10;python_version=="2.7"',
+    ],
     test_suite="run_tests.main",
     extras_require={
         ':python_version=="2.7"': ["enum34"],
