@@ -53,13 +53,15 @@ for dirpath, dirnames, filenames in os.walk(enum_dir):
 
 version = __import__("django_enumfield").__version__
 
+with open(os.path.join(root_dir, "README.md"), encoding="utf-8") as f:
+    description = f.read()
+
 setup(
     name="django-enumfield",
     version=version,
     description="Custom Django field for using enumerations of named constants",
-    long_description=open(
-        os.path.join(os.path.dirname(__file__), "README.md"), encoding="utf-8"
-    ).read(),
+    long_description=description,
+    long_description_content_type="text/markdown",
     author="Hannes Ljungberg",
     author_email="hannes@5monkeys.se",
     url="http://github.com/5monkeys/django-enumfield",
