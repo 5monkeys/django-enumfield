@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
+from typing import Callable, Collection, Dict, Optional, Type, Union, cast, overload
 
 from django.utils import six
 from django.utils.decorators import classproperty
@@ -25,6 +26,14 @@ class ClassmethodShortcut(object):
         self.property_name = property_name
         self.class_method = class_method
 
+    @overload
+    def __get__(self, instance: None, owner: Type["Enum"]) -> Callable[[], str]:
+        pass
+
+    @overload
+    def __get__(self, instance: "Enum", owner: Type["Enum"]) -> str:
+        pass
+
     def __get__(self, instance, owner):
         if instance is None:
             # class
@@ -35,12 +44,13 @@ class ClassmethodShortcut(object):
 class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
-    __labels__ = {}
-    __default__ = None
-    __transitions__ = {}
+    __labels__ = {}  # type: Dict[Union[Enum, int], six.text_type]
+    __default__ = None  # type: Optional[Union[Enum, int]]
+    __transitions__ = {}  # type: Dict[Union[Enum, int], Collection[Union[Enum, int]]]
 
     # Hack to make both Enum.VALUE.name and Enum.name(Enum.VALUE) available
-    name = ClassmethodShortcut("_name_", "get_name")
+    # `cast` is for mypy to consider this a str
+    name = cast(str, ClassmethodShortcut("_name_", "get_name"))
     label = ClassmethodShortcut("_label", "get_label")
 
     @classproperty

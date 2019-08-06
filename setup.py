@@ -92,6 +92,7 @@ setup(
     cmdclass=cmdclasses,
     data_files=data_files,
     packages=packages,
+    install_requires=["typing"],
     tests_require=[
         "Django",
         "djangorestframework",
@@ -104,6 +105,6 @@ setup(
         ':python_version=="3.1"': ["enum34"],
         ':python_version=="3.2"': ["enum34"],
         ':python_version=="3.3"': ["enum34"],
-        "dev": ["black", "isort"],
+        "dev": ["black", "isort", "Django", "mypy", "django-stubs"],
     },
 )

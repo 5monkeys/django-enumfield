@@ -18,7 +18,7 @@ class EnumField(models.IntegerField):
         EnumField(MyEnum, default=MyEnum.INITIAL)
     """
 
-    default_error_messages = models.IntegerField.default_error_messages
+    default_error_messages = models.IntegerField.default_error_messages  # type: ignore
 
     def __init__(self, enum, *args, **kwargs):
         kwargs.setdefault("choices", enum.choices())
