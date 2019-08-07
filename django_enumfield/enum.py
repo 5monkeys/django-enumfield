@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
-from typing import Callable, Sequence, Dict, Optional, Type, Union, cast, overload
+from typing import Sequence, Dict, Optional, Union
 
 from django.utils import six
 from django.utils.decorators import classproperty
