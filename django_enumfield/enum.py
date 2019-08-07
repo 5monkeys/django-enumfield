@@ -2,7 +2,7 @@ from __future__ import absolute_import
 
 import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
-from typing import Callable, Collection, Dict, Optional, Type, Union, cast, overload
+from typing import Callable, Sequence, Dict, Optional, Type, Union, cast, overload
 
 from django.utils import six
 from django.utils.decorators import classproperty
@@ -21,24 +21,17 @@ class BlankEnum(NativeEnum):
         return ""
 
 
-class ClassmethodShortcut(object):
-    def __init__(self, property_name, class_method):
-        self.property_name = property_name
-        self.class_method = class_method
+def classdispatcher(class_method):
+    class _classdispatcher(object):
+        def __init__(self, method=None):
+            self.fget = method
 
-    @overload
-    def __get__(self, instance: None, owner: Type["Enum"]) -> Callable[[], str]:
-        pass
+        def __get__(self, instance, cls=None):
+            if instance is None:
+                return getattr(cls, class_method)
+            return self.fget(instance)
 
-    @overload
-    def __get__(self, instance: "Enum", owner: Type["Enum"]) -> str:
-        pass
-
-    def __get__(self, instance, owner):
-        if instance is None:
-            # class
-            return getattr(owner, self.class_method)
-        return getattr(instance, self.property_name)
+    return _classdispatcher
 
 
 class Enum(NativeIntEnum):
@@ -46,12 +39,17 @@ class Enum(NativeIntEnum):
 
     __labels__ = {}  # type: Dict[Union[Enum, int], six.text_type]
     __default__ = None  # type: Optional[Union[Enum, int]]
-    __transitions__ = {}  # type: Dict[Union[Enum, int], Collection[Union[Enum, int]]]
+    __transitions__ = {}  # type: Dict[Union[Enum, int], Sequence[Union[Enum, int]]]
 
-    # Hack to make both Enum.VALUE.name and Enum.name(Enum.VALUE) available
-    # `cast` is for mypy to consider this a str
-    name = cast(str, ClassmethodShortcut("_name_", "get_name"))
-    label = ClassmethodShortcut("_label", "get_label")
+    @classdispatcher("get_name")
+    def name(self):
+        # type: () -> str
+        return self._name_
+
+    @classdispatcher("get_label")
+    def label(self):
+        # type: () -> str
+        return self._label
 
     @classproperty
     def do_not_call_in_templates(cls):
