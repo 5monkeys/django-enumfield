@@ -223,6 +223,9 @@ class EnumTest(TestCase):
     def test_label(self):
         self.assertEqual(PersonStatus.ALIVE.label, six.text_type("ALIVE"))
         self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
+        self.assertEqual(
+            LabelBeer.label(LabelBeer.STELLA), six.text_type("Stella Artois")
+        )
 
     def test_name(self):
         self.assertEqual(PersonStatus.ALIVE.name, six.text_type("ALIVE"))
