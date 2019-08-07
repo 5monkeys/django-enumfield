@@ -2,8 +2,7 @@ from __future__ import absolute_import
 
 import logging
 from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
-from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, cast, \
-    Type
+from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, cast
 
 from django.utils import six
 from django.utils.decorators import classproperty
@@ -134,8 +133,12 @@ class Enum(NativeIntEnum):
         return EnumField(cls, **kwargs)
 
     @classmethod
-    def get(cls, name_or_numeric, default=None):
-        # type: (Union[str, int, T], Optional[Default]) -> Union[Enum, Optional[Default]]
+    def get(
+        cls,
+        name_or_numeric,  # type: Union[str, int, T]
+        default=None,  # type: Optional[Default]
+    ):
+        # type: (...) -> Union[Enum, Optional[Default]]
         """ Get Enum.Value object matching the value argument.
         :param name_or_numeric: Integer value or attribute name
         :param default: The default to return if the value passed is not
