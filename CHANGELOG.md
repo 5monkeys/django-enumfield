@@ -20,6 +20,7 @@ Use `Enum.__default__ = VALUE` or pass it explicitly to `EnumField`
 - Converted README.rst to markdown (README.md)
 - Added Django 2.2 support
 - Dropped support for Django < 1.11
+- Added limited mypy support
 
 ## [1.5.0]
 
