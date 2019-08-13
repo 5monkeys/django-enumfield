@@ -192,4 +192,4 @@ Local Development Environment
 
 Make sure black and isort is installed in your env with `pip install -e .[dev]`.
 
-Before committing run `make format` to apply black and isort to all files to keep.
+Before committing run `make format` to apply black and isort to all files.
