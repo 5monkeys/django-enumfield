@@ -4,7 +4,23 @@ test:
 
 .PHONY: flake8
 flake8:
-	flake8 --ignore=E501,F403 --max-complexity 12 django_enumfield
+	flake8 django_enumfield
+
+.PHONY: mypy
+mypy:
+	mypy django_enumfield
+
+.PHONY: isort
+isort:
+	isort -rc django_enumfield run_tests.py setup.py
+
+.PHONY: black
+black:
+	black django_enumfield run_tests.py setup.py
+
+
+.PHONY: format
+format: black isort
 
 .PHONY: install
 install:
