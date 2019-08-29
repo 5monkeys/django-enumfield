@@ -1,4 +1,4 @@
-sudo: false
+sudo: true
 
 language: python
 python: 3.5
@@ -14,54 +14,32 @@ env:
   matrix:
     - ENV=py27-django111
 
-    - ENV=py34-django111
-    - ENV=py34-django20
-
     - ENV=py35-django111
     - ENV=py35-django20
     - ENV=py35-django21
+    - ENV=py35-django22
+
+    - ENV=py36-django111
+    - ENV=py36-django20
+    - ENV=py36-django21
+    - ENV=py36-django22
+
+    - ENV=py37-django20
+    - ENV=py37-django21
+    - ENV=py37-django22
+
+    - ENV=coverage
 
 matrix:
   include:
-    - env: ENV=py35-django22
-      python: 3.5
-      sudo: true
-      dist: xenial
-
-    - env: ENV=py36-django111
-      python: 3.6
-      sudo: true
-      dist: xenial
-    - env: ENV=py36-django20
-      python: 3.6
-      sudo: true
-      dist: xenial
-    - env: ENV=py36-django21
-      python: 3.6
-      sudo: true
-      dist: xenial
-    - env: ENV=py36-django22
-      python: 3.6
-      sudo: true
-      dist: xenial
-
-    - env: ENV=py37-django20
-      python: 3.7
-      sudo: true
-      dist: xenial
-    - env: ENV=py37-django21
-      python: 3.7
-      sudo: true
-      dist: xenial
-    - env: ENV=py37-django22
-      python: 3.7
-      sudo: true
-      dist: xenial
-
-    - env: ENV=coverage
-      python: 3.7
-      sudo: true
-      dist: xenial
+    - env: ENV=py34-django111
+      python: 3.4
+      sudo: false
+      dist: trusty
+    - env: ENV=py34-django20
+      python: 3.4
+      sudo: false
+      dist: trusty
 
 install:
   - pip install tox
