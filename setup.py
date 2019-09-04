@@ -92,7 +92,7 @@ setup(
     cmdclass=cmdclasses,
     data_files=data_files,
     packages=packages,
-    install_requires=["typing"],
+    install_requires=['typing;python_version<"3.5"'],
     tests_require=[
         "Django",
         "djangorestframework",
