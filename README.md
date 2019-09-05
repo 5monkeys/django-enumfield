@@ -7,7 +7,7 @@ Provides an enumeration Django model field (using `IntegerField`) with reusable 
 [![License](https://img.shields.io/pypi/l/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
 [![Python Versions](https://img.shields.io/pypi/pyversions/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
 [![Wheel](https://img.shields.io/pypi/wheel/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
-
+![Coveralls github](https://img.shields.io/coveralls/github/5monkeys/django-enumfield)
 
 Installation
 ------------
