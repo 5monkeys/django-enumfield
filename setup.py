@@ -92,6 +92,7 @@ setup(
     cmdclass=cmdclasses,
     data_files=data_files,
     packages=packages,
+    include_package_data=True,
     install_requires=['typing;python_version<"3.5"'],
     tests_require=[
         "Django",
