@@ -39,3 +39,6 @@ class EnumField(serializers.ChoiceField):
 class NamedEnumField(EnumField):
     def get_choice_value(self, enum_value):
         return enum_value.name
+
+    class Meta:
+        swagger_schema_fields = {"type": "string"}
