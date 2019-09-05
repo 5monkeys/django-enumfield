@@ -2,3 +2,4 @@ include AUTHORS
 include LICENSE
 include README.md
 include run_tests.py
+include django_enumfield/py.typed
