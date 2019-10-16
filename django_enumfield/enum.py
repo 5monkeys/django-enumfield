@@ -9,6 +9,8 @@ from django.utils.decorators import classproperty
 
 from django_enumfield.db.fields import EnumField
 
+__all__ = ("Enum", "EnumField")
+
 logger = logging.getLogger(__name__)
 RAISE = object()
 
