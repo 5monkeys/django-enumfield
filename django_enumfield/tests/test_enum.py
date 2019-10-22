@@ -236,6 +236,8 @@ class EnumFieldTest(TestCase):
         )
         self.assertEqual(form.fields["status"].choices, PersonStatus.choices())
 
+        # Test validation
+
         form = CustomPersonForm(
             data={"status": six.text_type(PersonStatus.ALIVE.value)},
             initial={"status": PersonStatus.DEAD.value},
@@ -253,6 +255,7 @@ class EnumFieldTest(TestCase):
         self.assertEqual(
             form.fields["status"].choices, PersonStatus.choices(blank=True)
         )
+        self.assertIn(u'<option value="" selected', six.text_type(form["status"]))
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["status"], six.text_type())
 
