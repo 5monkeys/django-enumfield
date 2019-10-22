@@ -243,6 +243,19 @@ class EnumFieldTest(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["status"], PersonStatus.ALIVE)
 
+    def test_enum_form_field_not_required(self):
+        class CustomPersonForm(forms.Form):
+            status = EnumChoiceField(PersonStatus, required=False)
+
+        form = CustomPersonForm(
+            data={"status": None}, initial={"status": PersonStatus.DEAD.value}
+        )
+        self.assertEqual(
+            form.fields["status"].choices, PersonStatus.choices(blank=True)
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        self.assertEqual(form.cleaned_data["status"], six.text_type())
+
 
 class EnumTest(TestCase):
     def test_label(self):
