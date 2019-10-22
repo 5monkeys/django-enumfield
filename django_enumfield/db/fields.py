@@ -1,4 +1,5 @@
 from enum import Enum
+from functools import partial
 
 from django import forms
 from django.db import models
@@ -128,10 +129,11 @@ class EnumField(models.IntegerField):
         )
 
     def formfield(self, **kwargs):
+        enum_form_class = partial(EnumChoiceField, enum=self.enum)
         defaults = {
             "widget": forms.Select,
-            "form_class": EnumChoiceField,
-            "choices_form_class": EnumChoiceField,
+            "form_class": enum_form_class,
+            "choices_form_class": enum_form_class,
             "choices": self.enum.choices(blank=self.blank),
         }
         defaults.update(kwargs)
