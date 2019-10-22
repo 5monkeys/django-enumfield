@@ -168,6 +168,7 @@ The `Enum`-class can also be used without the `EnumField`. This is very useful i
 ```python
 from django import forms
 from django_enumfield import enum
+from django_enumfield.forms.fields import EnumChoiceField
 
 
 class GenderEnum(enum.Enum):
@@ -181,7 +182,7 @@ class GenderEnum(enum.Enum):
 
 
 class PersonForm(forms.Form):
-    gender = forms.TypedChoiceField(choices=GenderEnum.choices(), coerce=int)
+    gender = EnumChoiceField(GenderEnum)
 ```
 
 Rendering `PersonForm` in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.

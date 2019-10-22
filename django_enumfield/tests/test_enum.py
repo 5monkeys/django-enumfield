@@ -59,6 +59,12 @@ def patch_sqlite_connection():
         DatabaseWrapper.disable_constraint_checking = old_disable
 
 
+class PersonForm(ModelForm):
+    class Meta:
+        model = Person
+        fields = ("status",)
+
+
 class EnumFieldTest(TestCase):
     def test_enum_field_init(self):
         for enum, default in {
@@ -151,11 +157,6 @@ class EnumFieldTest(TestCase):
         self.assertEqual(beer.style, BeerStyle.STOUT)
 
     def test_enum_field_modelform_create(self):
-        class PersonForm(ModelForm):
-            class Meta:
-                model = Person
-                fields = ("status",)
-
         request_factory = RequestFactory()
         request = request_factory.post("", data={"status": "2"})
         form = PersonForm(request.POST)
@@ -171,11 +172,6 @@ class EnumFieldTest(TestCase):
     def test_enum_field_modelform(self):
         person = Person.objects.create()
 
-        class PersonForm(ModelForm):
-            class Meta:
-                model = Person
-                fields = ("status",)
-
         request_factory = RequestFactory()
         request = request_factory.post("", data={"status": "2"})
         form = PersonForm(request.POST, instance=person)
@@ -187,6 +183,15 @@ class EnumFieldTest(TestCase):
         request = request_factory.post("", data={"status": "99"})
         form = PersonForm(request.POST, instance=person)
         self.assertFalse(form.is_valid())
+
+    def test_enum_field_modelform_initial(self):
+        person = Person.objects.create()
+        form = PersonForm(instance=person)
+        self.assertEqual(form.fields["status"].initial, PersonStatus.ALIVE.value)
+        self.assertIn(
+            u'<option value="{}" selected'.format(PersonStatus.ALIVE.value),
+            six.text_type(form["status"]),
+        )
 
     def test_enum_field_nullable_field(self):
         class BeerForm(ModelForm):

@@ -8,6 +8,7 @@ from django.utils.functional import curry
 from django.utils.translation import ugettext
 
 from django_enumfield.exceptions import InvalidStatusOperationError
+from django_enumfield.forms.fields import EnumChoiceField
 
 from .. import validators
 
@@ -64,6 +65,8 @@ class EnumField(models.IntegerField):
 
     def to_python(self, value):
         if value is not None:
+            if isinstance(value, six.text_type) and value.isdigit():
+                value = int(value)
             return self.enum.get(value)
 
     def _setup_validation(self, sender, **kwargs):
@@ -127,8 +130,8 @@ class EnumField(models.IntegerField):
     def formfield(self, **kwargs):
         defaults = {
             "widget": forms.Select,
-            "form_class": forms.TypedChoiceField,
-            "coerce": int,
+            "form_class": EnumChoiceField,
+            "choices_form_class": EnumChoiceField,
             "choices": self.enum.choices(blank=self.blank),
         }
         defaults.update(kwargs)
