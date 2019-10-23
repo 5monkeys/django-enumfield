@@ -48,7 +48,7 @@ matrix:
     - env: ENV=py37-django22
       python: 3.7
 
-    - env: ENV=coverage
+    - env: ENV=checks
       python: 3.7
 
 install:
