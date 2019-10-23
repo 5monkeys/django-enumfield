@@ -227,6 +227,12 @@ class EnumTest(TestCase):
             LabelBeer.label(LabelBeer.STELLA), six.text_type("Stella Artois")
         )
 
+        # Same as when coercing to string
+        self.assertEqual(six.text_type(PersonStatus.ALIVE), six.text_type("ALIVE"))
+        self.assertEqual(
+            six.text_type(LabelBeer.STELLA), six.text_type("Stella Artois")
+        )
+
     def test_name(self):
         self.assertEqual(PersonStatus.ALIVE.name, six.text_type("ALIVE"))
         self.assertEqual(LabelBeer.STELLA.name, six.text_type("STELLA"))

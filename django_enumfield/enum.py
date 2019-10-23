@@ -38,12 +38,16 @@ Default = TypeVar("Default")
 T = TypeVar("T", bound="Enum")
 
 
+@six.python_2_unicode_compatible
 class Enum(NativeIntEnum):
     """ A container for holding and restoring enum values """
 
     __labels__ = {}  # type: Dict[int, six.text_type]
     __default__ = None  # type: Optional[int]
     __transitions__ = {}  # type: Dict[int, Sequence[int]]
+
+    def __str__(self):
+        return self.label
 
     @classdispatcher("get_name")
     def name(self):
