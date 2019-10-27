@@ -20,7 +20,7 @@ try:
         return _partialmethod(method)
 
 
-except ImportError:
+except ImportError:  # pragma: no cover
     from django.utils.functional import curry
 
     def partialishmethod(method):
