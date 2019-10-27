@@ -58,7 +58,7 @@ matrix:
       python: 3.8
     - env: ENV=py38-django22
       python: 3.8
-    - env: ENV=py37-django30
+    - env: ENV=py38-django30
       python: 3.8
 
     - env: ENV=checks
