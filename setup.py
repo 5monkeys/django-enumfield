@@ -93,7 +93,7 @@ setup(
     data_files=data_files,
     packages=packages,
     include_package_data=True,
-    install_requires=['typing;python_version<"3.5"'],
+    install_requires=['typing;python_version<"3.5"', "six>=1.10.0"],
     tests_require=[
         "Django",
         "djangorestframework",

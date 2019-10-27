@@ -30,9 +30,15 @@ def main():
     )
     import warnings
 
-    # Ignore deprecation warning caused by Django on 3.7 + 2.0
-    is_py37_django20 = sys.version_info[:2] == (3, 7) and django.VERSION[:2] == (2, 0)
-    module = r"(?!django).*" if is_py37_django20 else ""
+    # Ignore deprecation warning caused by Django on 3.7/3.8 + 2.0/2.1
+    if sys.version_info[:2] in ((3, 7), (3, 8)) and django.VERSION[:2] in (
+        (2, 0),
+        (2, 1),
+    ):
+        module = r"(?!django).*"
+    else:
+        module = ""
+
     warnings.filterwarnings("error", module=module, category=DeprecationWarning)
 
     delete_migrations()
