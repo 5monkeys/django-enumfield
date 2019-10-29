@@ -43,3 +43,8 @@ coverage:
 .PHONY: clean
 clean:
 	rm -rf .tox/ dist/ *.egg *.egg-info .coverage* .eggs
+
+.PHONY: publish
+publish: clean
+	python setup.py sdist bdist_wheel
+	python -m twine upload dist/*
