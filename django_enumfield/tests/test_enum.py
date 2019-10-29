@@ -1,6 +1,7 @@
 from contextlib import contextmanager
 from os.path import abspath, dirname, exists, join
 
+import six
 from django import forms
 from django.core.management import call_command
 from django.db import IntegrityError, connection
@@ -8,7 +9,6 @@ from django.db.backends.sqlite3.base import DatabaseWrapper
 from django.db.models.fields import NOT_PROVIDED
 from django.test import TestCase
 from django.test.client import RequestFactory
-from django.utils import six
 
 from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import BlankEnum, Enum

@@ -19,6 +19,7 @@ not found instead of raising `AttributeError`
 Use `Enum.__default__ = VALUE` or pass it explicitly to `EnumField` 
 - Converted README.rst to markdown (README.md)
 - Added Django 2.2 support
+- Added Django 3.0b1 support
 - Dropped support for Django < 1.11
 - Added limited mypy support
 

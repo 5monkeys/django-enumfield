@@ -1,17 +1,30 @@
 from enum import Enum
 from functools import partial
+from typing import Any, Callable  # noqa: F401
 
+import six
 from django import forms
 from django.db import models
-from django.utils import six
 from django.utils.encoding import force_text
-from django.utils.functional import curry
 from django.utils.translation import ugettext
 
 from django_enumfield.exceptions import InvalidStatusOperationError
 from django_enumfield.forms.fields import EnumChoiceField
 
 from .. import validators
+
+try:
+    from functools import partialmethod as _partialmethod
+
+    def partialishmethod(method):
+        return _partialmethod(method)
+
+
+except ImportError:  # pragma: no cover
+    from django.utils.functional import curry
+
+    def partialishmethod(method):
+        return curry(method)
 
 
 class EnumField(models.IntegerField):
@@ -42,7 +55,11 @@ class EnumField(models.IntegerField):
     ):
         super(EnumField, self).contribute_to_class(cls, name)
         if self.choices:
-            setattr(cls, "get_%s_display" % self.name, curry(self._get_FIELD_display))
+            setattr(
+                cls,
+                "get_%s_display" % self.name,
+                partialishmethod(self._get_FIELD_display),
+            )
         models.signals.class_prepared.connect(self._setup_validation, sender=cls)
 
     def _get_FIELD_display(self, cls):
