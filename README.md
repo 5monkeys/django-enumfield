@@ -84,18 +84,25 @@ class BeerStyle(enum.Enum):
 
     __default__ = LAGER
 
+    
+class BeerStyleNoDefault(enum.Enum):
+    LAGER = 0
+
 
 class Beer(models.Model):
     style_default_lager = enum.EnumField(BeerStyle)
     style_default_stout = enum.EnumField(BeerStyle, default=BeerStyle.STOUT)
+    style_default_null = enum.EnumField(BeerStyleNoDefault, null=True, blank=True)
     
 
 # When you set __default__ attribute, you can access default value via
 # `.default()` method of your enum class
 assert BeerStyle.default() == BeerStyle.LAGER
 
-Beer.objects.create(style=BeerStyle.STOUT)
-Beer.objects.filter(style=BeerStyle.STOUT)
+beer = Beer.objects.create()
+assert beer.style_default_larger == BeerStyle.LAGER
+assert beer.style_default_stout = BeerStyle.STOUT
+assert beer.style_default_null is None
 ```
 
 ### Labels
