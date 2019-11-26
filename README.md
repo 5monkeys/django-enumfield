@@ -101,7 +101,7 @@ assert BeerStyle.default() == BeerStyle.LAGER
 
 beer = Beer.objects.create()
 assert beer.style_default_larger == BeerStyle.LAGER
-assert beer.style_default_stout = BeerStyle.STOUT
+assert beer.style_default_stout == BeerStyle.STOUT
 assert beer.style_default_null is None
 ```
 
