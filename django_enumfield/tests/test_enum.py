@@ -259,6 +259,10 @@ class EnumFieldTest(TestCase):
         self.assertTrue(form.is_valid(), form.errors)
         self.assertEqual(form.cleaned_data["status"], six.text_type())
 
+    def test_enum_display_none(self):
+        beer = Beer(state=None)
+        self.assertIsNone(beer.get_state_display())
+
 
 class EnumTest(TestCase):
     def test_label(self):
