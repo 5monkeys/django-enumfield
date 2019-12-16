@@ -1,6 +1,10 @@
 # Changelog
 
 
+## [2.0.1]
+
+- Fixed get_FIELD_display to handle `None`. (Pull #59)
+
 ## [2.0.0]
 
 **Many breaking changes this release.**
