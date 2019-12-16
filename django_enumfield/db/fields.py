@@ -64,6 +64,8 @@ class EnumField(models.IntegerField):
 
     def _get_FIELD_display(self, cls):
         value = getattr(cls, self.attname)
+        if value is None:
+            return value
         return force_text(value.label, strings_only=True)
 
     def get_prep_value(self, value):
