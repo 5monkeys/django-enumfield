@@ -9,7 +9,7 @@ from django_enumfield.validators import validate_available_choice
 
 class ValidatorTest(unittest.TestCase):
     def test_validate_available_choice_1(self):
-        """Test passing a value non convertable to an int raises an
+        """Test passing a value non convertible to an int raises an
         InvalidStatusOperationError
         """
         self.assertRaises(
