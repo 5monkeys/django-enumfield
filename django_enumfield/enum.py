@@ -5,7 +5,12 @@ from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
 from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, cast
 
 import six
-from django.utils.decorators import classproperty
+
+try:
+    from django.utils.functional import classproperty  # type: ignore
+except ImportError:
+    # Pre-Django 3.1
+    from django.utils.decorators import classproperty
 
 from django_enumfield.db.fields import EnumField
 
