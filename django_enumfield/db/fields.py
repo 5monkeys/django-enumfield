@@ -28,9 +28,9 @@ except ImportError:  # pragma: no cover
 
 
 class EnumField(models.IntegerField):
-    """ EnumField is a convenience field to automatically handle validation of transitions
-        between Enum values and set field choices from the enum.
-        EnumField(MyEnum, default=MyEnum.INITIAL)
+    """EnumField is a convenience field to automatically handle validation of transitions
+    between Enum values and set field choices from the enum.
+    EnumField(MyEnum, default=MyEnum.INITIAL)
     """
 
     default_error_messages = models.IntegerField.default_error_messages  # type: ignore

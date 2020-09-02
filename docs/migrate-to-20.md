@@ -26,7 +26,7 @@ class MyEnum(Enum):
 **After:**
 ```python
 from django_enumfield.enum import Enum
-from django.utils.decorators import classproperty
+from django.utils.functional import classproperty
 
 
 class MyEnum(Enum):
