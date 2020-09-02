@@ -19,8 +19,7 @@ class ValidatorTest(unittest.TestCase):
         )
 
     def test_validate_available_choice_2(self):
-        """Test passing an int as a string validation
-        """
+        """Test passing an int as a string validation"""
         self.assertRaises(
             InvalidStatusOperationError,
             validate_available_choice,
@@ -29,8 +28,7 @@ class ValidatorTest(unittest.TestCase):
         )
 
     def test_validate_available_choice_3(self):
-        """Test passing an int validation
-        """
+        """Test passing an int validation"""
         self.assertIsNone(validate_available_choice(BeerStyle, BeerStyle.LAGER))
 
     def test_validate_by_setting(self):
