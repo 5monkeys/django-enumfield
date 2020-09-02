@@ -126,6 +126,7 @@ class Enum(NativeIntEnum):
         """
         if cls.__default__ is not None:
             return cast(Enum, cls(cls.__default__))
+        return None
 
     @classmethod
     def field(cls, **kwargs):
