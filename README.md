@@ -12,7 +12,7 @@ Provides an enumeration Django model field (using `IntegerField`) with reusable 
 Installation
 ------------
 
-Currently, [we test](https://travis-ci.org/5monkeys/django-enumfield) Django versions 1.11-2.2 and Python versions 2.7, 3.4-3.7.
+Currently, [we test](https://travis-ci.org/5monkeys/django-enumfield) Django versions 1.11-3.1 and Python versions 2.7, 3.4-3.8.
 
 Install `django-enumfield` in your Python environment:
 
@@ -20,12 +20,12 @@ Install `django-enumfield` in your Python environment:
 $ pip install django-enumfield
 ```
 
-**Upgrading from django-enumfield 1.x?** [See the migration guide](docs/migrate-to-20.md) 
+**Upgrading from django-enumfield 1.x?** [See the migration guide](docs/migrate-to-20.md)
 
-For use with Django versions prior to 1.8 use version 
+For use with Django versions prior to 1.8 use version
 [`1.2.1`](https://github.com/5monkeys/django-enumfield/tree/1.2.1)
 
-For use with Django versions prior to 1.11 use version 
+For use with Django versions prior to 1.11 use version
 [`1.5`](https://github.com/5monkeys/django-enumfield/tree/1.5)
 
 Usage
@@ -46,7 +46,7 @@ class BeerStyle(enum.Enum):
 
 class Beer(models.Model):
     style = enum.EnumField(BeerStyle, default=BeerStyle.LAGER)
-    
+
 
 # Use .get to get enum values from either name or ints
 print(BeerStyle.get("LAGER"))  # <BeerStyle.LAGER: 0>
@@ -62,8 +62,8 @@ print(BeerStyle.LAGER.value)  # 0
 print(BeerStyle.LAGER.name)  # "LAGER"
 ```
 
-For more information about Python 3 enums 
-(which our `Enum` inherits, `IntEnum` to be specific) 
+For more information about Python 3 enums
+(which our `Enum` inherits, `IntEnum` to be specific)
 checkout the [docs](https://docs.python.org/3/library/enum.html).
 
 
@@ -84,7 +84,7 @@ class BeerStyle(enum.Enum):
 
     __default__ = LAGER
 
-    
+
 class BeerStyleNoDefault(enum.Enum):
     LAGER = 0
 
@@ -93,7 +93,7 @@ class Beer(models.Model):
     style_default_lager = enum.EnumField(BeerStyle)
     style_default_stout = enum.EnumField(BeerStyle, default=BeerStyle.STOUT)
     style_default_null = enum.EnumField(BeerStyleNoDefault, null=True, blank=True)
-    
+
 
 # When you set __default__ attribute, you can access default value via
 # `.default()` method of your enum class
@@ -123,12 +123,12 @@ class Animals(enum.Enum):
         CAT: ugettext_lazy("Cat"),
         DOG: ugettext_lazy("Dog"),
     }
-    
+
 
 print(Animals.CAT.label)  # "Cat"
 print(Animals.SHARK.label)  # "SHARK"
 
-# There's also classmethods for getting the label 
+# There's also classmethods for getting the label
 print(Animals.get_label(2))  # "Dog"
 print(Animals.get_label("DOG"))  # "Dog"
 ```
