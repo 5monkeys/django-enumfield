@@ -1,6 +1,10 @@
 # Changelog
 
 
+## [2.0.2]
+
+- Added Django 3.1 support. (Pull #63)
+
 ## [2.0.1]
 
 - Fixed get_FIELD_display to handle `None`. (Pull #59)
@@ -9,18 +13,18 @@
 
 **Many breaking changes this release.**
 
-- The ``enumfield.enum.Enum`` class is now a subclass of the native `IntEnum` 
+- The ``enumfield.enum.Enum`` class is now a subclass of the native `IntEnum`
 shipped with Python 3.4 (uses the ``enum34`` package on previous versions of Python)
 - Renamed `labels` to `__labels__`
 - Renamed `_transitions` to `__transitions__`
-- Added aliases for the classmethods `Enum.name()` as `Enum.get_name()` and 
-`Enum.label()` as `Enum.get_label()`.  Access the old way 
-(`Enum.name()` and `Enum.label()`) is still supported though, but the new names 
+- Added aliases for the classmethods `Enum.name()` as `Enum.get_name()` and
+`Enum.label()` as `Enum.get_label()`.  Access the old way
+(`Enum.name()` and `Enum.label()`) is still supported though, but the new names
 are easier to be discovered by IDEs for example.
-- `Enum.get_label()` and `Enum.get_name()` now return None if the enum value was 
+- `Enum.get_label()` and `Enum.get_name()` now return None if the enum value was
 not found instead of raising `AttributeError`
 - `EnumField` does not automatically set a default which is the first enum value anymore.
-Use `Enum.__default__ = VALUE` or pass it explicitly to `EnumField` 
+Use `Enum.__default__ = VALUE` or pass it explicitly to `EnumField`
 - Converted README.rst to markdown (README.md)
 - Added Django 2.2 support
 - Added Django 3.0b1 support
