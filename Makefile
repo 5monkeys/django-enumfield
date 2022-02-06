@@ -23,7 +23,7 @@ black-check:
 	black --check django_enumfield run_tests.py setup.py
 
 .PHONY: checks
-checks: flake8 mypy black-check
+checks: mypy flake8 black-check
 
 .PHONY: format
 format: black isort

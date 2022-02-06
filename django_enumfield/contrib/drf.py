@@ -1,4 +1,3 @@
-import six
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 
@@ -18,7 +17,7 @@ class EnumField(serializers.ChoiceField):
         return enum_value.value
 
     def to_internal_value(self, data):
-        if isinstance(data, six.string_types) and data.isdigit():
+        if isinstance(data, str) and data.isdigit():
             data = int(data)
 
         try:

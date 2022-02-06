@@ -1,6 +1,12 @@
 # Changelog
 
 
+## [unreleased]
+
+- Move CI to GitHub Actions
+- Dropped support for Python < 3.7
+- Dropped support for Django < 2.2
+
 ## [2.0.2]
 
 - Added Django 3.1 support. (Pull #63)

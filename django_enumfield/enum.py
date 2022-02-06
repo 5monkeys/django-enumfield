@@ -1,10 +1,9 @@
 from __future__ import absolute_import
 
 import logging
-from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
-from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, cast
-
-import six
+import enum
+from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Union, cast, Mapping
+from django.utils.encoding import force_str
 
 try:
     from django.utils.functional import classproperty  # type: ignore
@@ -20,7 +19,7 @@ logger = logging.getLogger(__name__)
 RAISE = object()
 
 
-class BlankEnum(NativeEnum):
+class BlankEnum(enum.Enum):
     BLANK = ""
 
     @property
@@ -45,13 +44,12 @@ Default = TypeVar("Default")
 T = TypeVar("T", bound="Enum")
 
 
-@six.python_2_unicode_compatible
-class Enum(NativeIntEnum):
-    """ A container for holding and restoring enum values """
+class Enum(enum.IntEnum):
+    """A container for holding and restoring enum values"""
 
-    __labels__ = {}  # type: Dict[int, six.text_type]
+    __labels__ = {}  # type: Mapping[int, str]
     __default__ = None  # type: Optional[int]
-    __transitions__ = {}  # type: Dict[int, Sequence[int]]
+    __transitions__ = {}  # type: Mapping[int, Sequence[int]]
 
     def __str__(self):
         return self.label
@@ -68,19 +66,20 @@ class Enum(NativeIntEnum):
         :return: label for value
         :rtype: str
         """
-        label = cast(str, self.__class__.__labels__.get(self.value, self.name))
-        return six.text_type(label)
+        labels = self.__class__.__labels__
+        return force_str(labels.get(self.value, self.name))
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def do_not_call_in_templates(cls):
         # type: () -> bool
         # Fix for Django templates so that any lookups of enums won't fail
         # More info: https://stackoverflow.com/questions/35953132/how-to-access-enum-types-in-django-templates  # noqa: E501
         return True
 
-    @classproperty
-    def values(cls):  # type: ignore
-        return {member.value: member for member in cls}
+    @classproperty  # type: ignore[arg-type]
+    def values(cls):
+        # type: () -> Mapping[int, Enum]
+        return {member.value: member for member in cls}  # type: ignore[attr-defined]
 
     def deconstruct(self):
         """
@@ -103,13 +102,13 @@ class Enum(NativeIntEnum):
 
     @classmethod
     def choices(cls, blank=False):
-        # type: (bool) -> List[Tuple[Union[int, str], NativeEnum]]
+        # type: (bool) -> List[Tuple[Union[int, str], enum.Enum]]
         """Choices for Enum
         :return: List of tuples (<value>, <member>)
         """
         choices = sorted(
             [(member.value, member) for member in cls], key=lambda x: x[0]
-        )  # type: List[Tuple[Union[str, int], NativeEnum]]
+        )  # type: List[Tuple[Union[str, int], enum.Enum]]
         if blank:
             choices.insert(0, (BlankEnum.BLANK.value, BlankEnum.BLANK))
         return choices
@@ -164,7 +163,7 @@ class Enum(NativeIntEnum):
                 return cls(name_or_numeric)
             except ValueError:
                 pass
-        elif isinstance(name_or_numeric, six.string_types):
+        elif isinstance(name_or_numeric, str):
             try:
                 return cls[name_or_numeric]
             except KeyError:
@@ -225,4 +224,5 @@ class Enum(NativeIntEnum):
         """
         if isinstance(to_value, cls):
             to_value = to_value.value
-        return cast(Sequence[int], cls.__transitions__.get(to_value, []))
+
+        return cls.__transitions__.get(to_value, [])
