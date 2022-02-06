@@ -2,7 +2,6 @@ from enum import Enum
 from functools import partial
 from typing import Any, Callable  # noqa: F401
 
-import six
 from django import forms
 from django.db import models
 from django.utils.encoding import force_text
@@ -18,7 +17,6 @@ try:
 
     def partialishmethod(method):
         return _partialmethod(method)
-
 
 except ImportError:  # pragma: no cover
     from django.utils.functional import curry
@@ -85,7 +83,7 @@ class EnumField(models.IntegerField):
 
     def to_python(self, value):
         if value is not None:
-            if isinstance(value, six.text_type) and value.isdigit():
+            if isinstance(value, str) and value.isdigit():
                 value = int(value)
             return self.enum.get(value)
 
@@ -120,10 +118,8 @@ class EnumField(models.IntegerField):
                 except ValueError:
                     raise InvalidStatusOperationError(
                         ugettext(
-                            six.text_type(
-                                "{value!r} is not one of the available choices "
-                                "for enum {enum}."
-                            )
+                            "{value!r} is not one of the available choices "
+                            "for enum {enum}."
                         ).format(value=new_value, enum=enum)
                     )
             setattr(self, private_att_name, new_value)

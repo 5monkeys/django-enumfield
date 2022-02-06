@@ -23,7 +23,7 @@ else:
 
 
 def fullsplit(path, result=None):
-    """ Split a pathname into components (the opposite of os.path.join) in a platform-neutral way."""
+    """Split a pathname into components (the opposite of os.path.join) in a platform-neutral way."""
     if result is None:
         result = []
     head, tail = os.path.split(path)
@@ -73,12 +73,7 @@ setup(
     license="MIT",
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Framework :: Django",
@@ -94,19 +89,13 @@ setup(
     data_files=data_files,
     packages=packages,
     include_package_data=True,
-    install_requires=['typing;python_version<"3.5"', "six>=1.10.0"],
     tests_require=[
         "Django",
         "djangorestframework",
-        'djangorestframework<3.10;python_version=="2.7"',
     ],
+    zip_safe=False,
     test_suite="run_tests.main",
     extras_require={
-        ':python_version=="2.7"': ["enum34"],
-        ':python_version=="3.0"': ["enum34"],
-        ':python_version=="3.1"': ["enum34"],
-        ':python_version=="3.2"': ["enum34"],
-        ':python_version=="3.3"': ["enum34"],
         "dev": [
             "black",
             "isort",

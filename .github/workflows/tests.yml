@@ -1,0 +1,40 @@
+name: Test
+
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - python: "3.7"
+            tox_env: py37-django22
+          - python: "3.7"
+            tox_env: py37-django30
+          - python: "3.7"
+            tox_env: py37-django31
+          - python: "3.8"
+            tox_env: py38-django22
+          - python: "3.8"
+            tox_env: py38-django30
+          - python: "3.8"
+            tox_env: py38-django31
+          - python: "3.7"
+            tox_env: checks
+    name: ${{ matrix.tox_env }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install tox
+      - name: Run ${{ matrix.tox_env }} job
+        run: tox -e ${{ matrix.tox_env }}

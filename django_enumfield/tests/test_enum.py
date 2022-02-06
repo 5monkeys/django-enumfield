@@ -1,7 +1,6 @@
 from contextlib import contextmanager
 from os.path import abspath, dirname, exists, join
 
-import six
 from django import forms
 from django.core.management import call_command
 from django.db import IntegrityError, connection
@@ -190,8 +189,8 @@ class EnumFieldTest(TestCase):
         form = PersonForm(instance=person)
         self.assertEqual(form.fields["status"].initial, PersonStatus.ALIVE.value)
         self.assertIn(
-            u'<option value="{}" selected'.format(PersonStatus.ALIVE.value),
-            six.text_type(form["status"]),
+            '<option value="{}" selected'.format(PersonStatus.ALIVE.value),
+            str(form["status"]),
         )
 
     def test_enum_field_nullable_field(self):
@@ -231,15 +230,15 @@ class EnumFieldTest(TestCase):
         form = CustomPersonForm(initial={"status": PersonStatus.DEAD})
         self.assertEqual(form["status"].initial, PersonStatus.DEAD.value)
         self.assertIn(
-            u'<option value="{}" selected'.format(PersonStatus.DEAD.value),
-            six.text_type(form["status"]),
+            '<option value="{}" selected'.format(PersonStatus.DEAD.value),
+            str(form["status"]),
         )
         self.assertEqual(form.fields["status"].choices, PersonStatus.choices())
 
         # Test validation
 
         form = CustomPersonForm(
-            data={"status": six.text_type(PersonStatus.ALIVE.value)},
+            data={"status": str(PersonStatus.ALIVE.value)},
             initial={"status": PersonStatus.DEAD.value},
         )
         self.assertTrue(form.is_valid(), form.errors)
@@ -255,9 +254,9 @@ class EnumFieldTest(TestCase):
         self.assertEqual(
             form.fields["status"].choices, PersonStatus.choices(blank=True)
         )
-        self.assertIn(u'<option value="" selected', six.text_type(form["status"]))
+        self.assertIn('<option value="" selected', str(form["status"]))
         self.assertTrue(form.is_valid(), form.errors)
-        self.assertEqual(form.cleaned_data["status"], six.text_type())
+        self.assertEqual(form.cleaned_data["status"], "")
 
     def test_enum_display_none(self):
         beer = Beer(state=None)
@@ -266,35 +265,29 @@ class EnumFieldTest(TestCase):
 
 class EnumTest(TestCase):
     def test_label(self):
-        self.assertEqual(PersonStatus.ALIVE.label, six.text_type("ALIVE"))
-        self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
-        self.assertEqual(
-            LabelBeer.label(LabelBeer.STELLA), six.text_type("Stella Artois")
-        )
+        self.assertEqual(PersonStatus.ALIVE.label, "ALIVE")
+        self.assertEqual(LabelBeer.STELLA.label, "Stella Artois")
+        self.assertEqual(LabelBeer.label(LabelBeer.STELLA), "Stella Artois")
 
         # Same as when coercing to string
-        self.assertEqual(six.text_type(PersonStatus.ALIVE), six.text_type("ALIVE"))
-        self.assertEqual(
-            six.text_type(LabelBeer.STELLA), six.text_type("Stella Artois")
-        )
+        self.assertEqual(str(PersonStatus.ALIVE), "ALIVE")
+        self.assertEqual(str(LabelBeer.STELLA), "Stella Artois")
 
     def test_name(self):
-        self.assertEqual(PersonStatus.ALIVE.name, six.text_type("ALIVE"))
-        self.assertEqual(LabelBeer.STELLA.name, six.text_type("STELLA"))
+        self.assertEqual(PersonStatus.ALIVE.name, "ALIVE")
+        self.assertEqual(LabelBeer.STELLA.name, "STELLA")
 
         # Check that the old classmethod still works. Kept for backward compatibility.
-        self.assertEqual(
-            LabelBeer.name(LabelBeer.STELLA.value), six.text_type("STELLA")
-        )
-        self.assertEqual(PersonStatus.name("ALIVE"), six.text_type("ALIVE"))
-        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), six.text_type("ALIVE"))
+        self.assertEqual(LabelBeer.name(LabelBeer.STELLA.value), "STELLA")
+        self.assertEqual(PersonStatus.name("ALIVE"), "ALIVE")
+        self.assertEqual(PersonStatus.name(PersonStatus.ALIVE), "ALIVE")
 
     def test_get(self):
         self.assertTrue(isinstance(PersonStatus.get(PersonStatus.ALIVE), Enum))
-        self.assertTrue(isinstance(PersonStatus.get(six.text_type("ALIVE")), Enum))
+        self.assertTrue(isinstance(PersonStatus.get("ALIVE"), Enum))
         self.assertEqual(
             PersonStatus.get(PersonStatus.ALIVE),
-            PersonStatus.get(six.text_type("ALIVE")),
+            PersonStatus.get("ALIVE"),
         )
 
         # Returns `default` if not found
@@ -326,7 +319,7 @@ class EnumTest(TestCase):
         self.assertEqual(len(PersonStatus.items()), len(PersonStatus))
         for name, value in PersonStatus.items():
             self.assertTrue(isinstance(value, int))
-            self.assertTrue(isinstance(name, six.string_types))
+            self.assertTrue(isinstance(name, str))
             self.assertEqual(PersonStatus.get(value), PersonStatus.get(name))
 
     def test_default(self):
@@ -349,14 +342,12 @@ class EnumTest(TestCase):
     def test_labels(self):
         self.assertEqual(LabelBeer.JUPILER.name, LabelBeer.JUPILER.label)
         self.assertNotEqual(LabelBeer.STELLA.name, LabelBeer.STELLA.label)
-        self.assertTrue(isinstance(LabelBeer.STELLA.label, six.string_types))
-        self.assertEqual(LabelBeer.STELLA.label, six.text_type("Stella Artois"))
+        self.assertTrue(isinstance(LabelBeer.STELLA.label, str))
+        self.assertEqual(LabelBeer.STELLA.label, "Stella Artois")
 
         # Check that the old classmethod still works. Kept for backward compatibility.
-        self.assertEqual(
-            LabelBeer.label(LabelBeer.STELLA.value), six.text_type("Stella Artois")
-        )
-        self.assertEqual(LabelBeer.label("STELLA"), six.text_type("Stella Artois"))
+        self.assertEqual(LabelBeer.label(LabelBeer.STELLA.value), "Stella Artois")
+        self.assertEqual(LabelBeer.label("STELLA"), "Stella Artois")
 
     def test_hash(self):
         self.assertTrue({LabelBeer.JUPILER: True}[LabelBeer.JUPILER])

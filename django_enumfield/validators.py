@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-import six
 from django.utils.translation import gettext as _, ugettext
 
 from django_enumfield.exceptions import InvalidStatusOperationError
@@ -13,9 +12,7 @@ def validate_valid_transition(enum, from_value, to_value):
     """
     validate_available_choice(enum, to_value)
     if not enum.is_valid_transition(from_value, to_value):
-        message = _(
-            six.text_type('{enum} can not go from "{from_value}" to "{to_value}"')
-        )
+        message = _('{enum} can not go from "{from_value}" to "{to_value}"')
         raise InvalidStatusOperationError(
             message.format(
                 enum=enum.__name__,
@@ -38,8 +35,6 @@ def validate_available_choice(enum, to_value):
     except ValueError:
         raise InvalidStatusOperationError(
             ugettext(
-                six.text_type(
-                    "{value!r} is not one of the available choices " "for enum {enum}."
-                )
+                "{value!r} is not one of the available choices " "for enum {enum}."
             ).format(value=to_value, enum=enum)
         )

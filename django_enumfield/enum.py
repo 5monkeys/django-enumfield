@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 
 import logging
-from enum import Enum as NativeEnum, IntEnum as NativeIntEnum
-from typing import Any, Dict, List, Optional, Sequence, Tuple, TypeVar, Union, cast
-
-import six
+from collections import abc
+import enum
+from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Union, cast, Mapping
+from django.utils.encoding import force_str
 
 try:
     from django.utils.functional import classproperty  # type: ignore
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 RAISE = object()
 
 
-class BlankEnum(NativeEnum):
+class BlankEnum(enum.Enum):
     BLANK = ""
 
     @property
@@ -45,13 +45,15 @@ Default = TypeVar("Default")
 T = TypeVar("T", bound="Enum")
 
 
-@six.python_2_unicode_compatible
-class Enum(NativeIntEnum):
-    """ A container for holding and restoring enum values """
+class Enum(enum.IntEnum):
+    """A container for holding and restoring enum values"""
 
-    __labels__ = {}  # type: Dict[int, six.text_type]
-    __default__ = None  # type: Optional[int]
-    __transitions__ = {}  # type: Dict[int, Sequence[int]]
+    # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
+    # has been resolved. If we keep these uncommented we'd pollute with mypy errors
+    # everywhere someone declares these attributes on their own enum class.
+    # __labels__ = {}  # type: Dict[int, str]
+    # __default__ = None  # type: Optional[int]
+    # __transitions__ = {}  # type: Dict[int, Sequence[int]]
 
     def __str__(self):
         return self.label
@@ -68,8 +70,12 @@ class Enum(NativeIntEnum):
         :return: label for value
         :rtype: str
         """
-        label = cast(str, self.__class__.__labels__.get(self.value, self.name))
-        return six.text_type(label)
+        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
+        # has been resolved.
+        # labels = self.__class__.__labels__
+        labels: Mapping[int, str] = getattr(self.__class__, "__labels__", {})
+        assert isinstance(labels, abc.Mapping)
+        return force_str(labels.get(self.value, self.name))
 
     @classproperty
     def do_not_call_in_templates(cls):
@@ -103,13 +109,13 @@ class Enum(NativeIntEnum):
 
     @classmethod
     def choices(cls, blank=False):
-        # type: (bool) -> List[Tuple[Union[int, str], NativeEnum]]
+        # type: (bool) -> List[Tuple[Union[int, str], enum.Enum]]
         """Choices for Enum
         :return: List of tuples (<value>, <member>)
         """
         choices = sorted(
             [(member.value, member) for member in cls], key=lambda x: x[0]
-        )  # type: List[Tuple[Union[str, int], NativeEnum]]
+        )  # type: List[Tuple[Union[str, int], enum.Enum]]
         if blank:
             choices.insert(0, (BlankEnum.BLANK.value, BlankEnum.BLANK))
         return choices
@@ -124,8 +130,13 @@ class Enum(NativeIntEnum):
             IntegerField(choices=my_enum.choices(), default=my_enum.default(), ...
         :return Default value, if set.
         """
-        if cls.__default__ is not None:
-            return cast(Enum, cls(cls.__default__))
+        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
+        # has been resolved.
+        # value = cls.__default__
+        value: Optional[int] = getattr(cls, "__default__", None)
+        assert value is None or isinstance(value, int)
+        if value is not None:
+            return cast(Enum, cls(value))
         return None
 
     @classmethod
@@ -164,7 +175,7 @@ class Enum(NativeIntEnum):
                 return cls(name_or_numeric)
             except ValueError:
                 pass
-        elif isinstance(name_or_numeric, six.string_types):
+        elif isinstance(name_or_numeric, str):
             try:
                 return cls[name_or_numeric]
             except KeyError:
@@ -211,9 +222,14 @@ class Enum(NativeIntEnum):
         if isinstance(to_value, cls):
             to_value = to_value.value
 
+        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
+        # has been resolved.
+        # transitions = cls.__transitions__
+        transitions: Mapping[int, Sequence[int]] = getattr(cls, "__transitions__", {})
+        assert isinstance(transitions, abc.Mapping)
         return (
             from_value == to_value
-            or not cls.__transitions__
+            or not transitions
             or (from_value in cls.transition_origins(to_value))
         )
 
@@ -225,4 +241,10 @@ class Enum(NativeIntEnum):
         """
         if isinstance(to_value, cls):
             to_value = to_value.value
-        return cast(Sequence[int], cls.__transitions__.get(to_value, []))
+
+        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
+        # has been resolved.
+        # transitions = cls.__transitions__
+        transitions: Mapping[int, Sequence[int]] = getattr(cls, "__transitions__", {})
+        assert isinstance(transitions, abc.Mapping)
+        return transitions.get(to_value, [])
