@@ -1,7 +1,6 @@
 from __future__ import absolute_import
 
 import logging
-from collections import abc
 import enum
 from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Union, cast, Mapping
 from django.utils.encoding import force_str
@@ -48,12 +47,9 @@ T = TypeVar("T", bound="Enum")
 class Enum(enum.IntEnum):
     """A container for holding and restoring enum values"""
 
-    # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
-    # has been resolved. If we keep these uncommented we'd pollute with mypy errors
-    # everywhere someone declares these attributes on their own enum class.
-    # __labels__ = {}  # type: Dict[int, str]
-    # __default__ = None  # type: Optional[int]
-    # __transitions__ = {}  # type: Dict[int, Sequence[int]]
+    __labels__ = {}  # type: Mapping[int, str]
+    __default__ = None  # type: Optional[int]
+    __transitions__ = {}  # type: Mapping[int, Sequence[int]]
 
     def __str__(self):
         return self.label
@@ -70,23 +66,20 @@ class Enum(enum.IntEnum):
         :return: label for value
         :rtype: str
         """
-        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
-        # has been resolved.
-        # labels = self.__class__.__labels__
-        labels: Mapping[int, str] = getattr(self.__class__, "__labels__", {})
-        assert isinstance(labels, abc.Mapping)
+        labels = self.__class__.__labels__
         return force_str(labels.get(self.value, self.name))
 
-    @classproperty
+    @classproperty  # type: ignore[arg-type]
     def do_not_call_in_templates(cls):
         # type: () -> bool
         # Fix for Django templates so that any lookups of enums won't fail
         # More info: https://stackoverflow.com/questions/35953132/how-to-access-enum-types-in-django-templates  # noqa: E501
         return True
 
-    @classproperty
-    def values(cls):  # type: ignore
-        return {member.value: member for member in cls}
+    @classproperty  # type: ignore[arg-type]
+    def values(cls):
+        # type: () -> Mapping[int, Enum]
+        return {member.value: member for member in cls}  # type: ignore[attr-defined]
 
     def deconstruct(self):
         """
@@ -130,13 +123,8 @@ class Enum(enum.IntEnum):
             IntegerField(choices=my_enum.choices(), default=my_enum.default(), ...
         :return Default value, if set.
         """
-        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
-        # has been resolved.
-        # value = cls.__default__
-        value: Optional[int] = getattr(cls, "__default__", None)
-        assert value is None or isinstance(value, int)
-        if value is not None:
-            return cast(Enum, cls(value))
+        if cls.__default__ is not None:
+            return cast(Enum, cls(cls.__default__))
         return None
 
     @classmethod
@@ -222,14 +210,9 @@ class Enum(enum.IntEnum):
         if isinstance(to_value, cls):
             to_value = to_value.value
 
-        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
-        # has been resolved.
-        # transitions = cls.__transitions__
-        transitions: Mapping[int, Sequence[int]] = getattr(cls, "__transitions__", {})
-        assert isinstance(transitions, abc.Mapping)
         return (
             from_value == to_value
-            or not transitions
+            or not cls.__transitions__
             or (from_value in cls.transition_origins(to_value))
         )
 
@@ -242,9 +225,4 @@ class Enum(enum.IntEnum):
         if isinstance(to_value, cls):
             to_value = to_value.value
 
-        # TODO: Can be uncommented once https://github.com/python/mypy/issues/12132
-        # has been resolved.
-        # transitions = cls.__transitions__
-        transitions: Mapping[int, Sequence[int]] = getattr(cls, "__transitions__", {})
-        assert isinstance(transitions, abc.Mapping)
-        return transitions.get(to_value, [])
+        return cls.__transitions__.get(to_value, [])
