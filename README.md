@@ -2,7 +2,7 @@
 
 Provides an enumeration Django model field (using `IntegerField`) with reusable enums and transition validation.
 
-[![Build Status](https://travis-ci.org/5monkeys/django-enumfield.svg?branch=master)](https://travis-ci.org/5monkeys/django-enumfield)
+[![Build Status](https://github.com/5monkeys/django-enumfield/workflows/Test/badge.svg)](https://github.com/5monkeys/django-enumfield/actions)
 [![PyPi Version](https://img.shields.io/pypi/v/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
 [![License](https://img.shields.io/pypi/l/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
 [![Python Versions](https://img.shields.io/pypi/pyversions/django-enumfield.svg)](https://pypi.python.org/pypi/django-enumfield)
@@ -12,7 +12,7 @@ Provides an enumeration Django model field (using `IntegerField`) with reusable 
 Installation
 ------------
 
-Currently, [we test](https://travis-ci.org/5monkeys/django-enumfield) Django versions 1.11-3.1 and Python versions 2.7, 3.4-3.8.
+Currently, [we test](https://github.com/5monkeys/django-enumfield/actions) Django versions 2.2-3.2 and Python versions 3.7-3.10.
 
 Install `django-enumfield` in your Python environment:
 
