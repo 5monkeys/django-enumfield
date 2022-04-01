@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-from django.utils.translation import gettext as _, ugettext
+from django.utils.translation import gettext as _
 
 from django_enumfield.exceptions import InvalidStatusOperationError
 
@@ -34,7 +34,7 @@ def validate_available_choice(enum, to_value):
         enum(to_value)
     except ValueError:
         raise InvalidStatusOperationError(
-            ugettext(
+            _(
                 "{value!r} is not one of the available choices " "for enum {enum}."
             ).format(value=to_value, enum=enum)
         )
