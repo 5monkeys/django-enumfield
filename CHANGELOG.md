@@ -6,6 +6,8 @@
 - Move CI to GitHub Actions
 - Dropped support for Python < 3.7
 - Dropped support for Django < 2.2
+- Added support for Django 3.2
+- Added support for Python 3.10
 
 ## [2.0.2]
 

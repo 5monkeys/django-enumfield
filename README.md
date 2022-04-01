@@ -110,7 +110,7 @@ assert beer.style_default_null is None
 You can use your own labels for `Enum` items
 
 ```python
-from django.utils.translation import ugettext_lazy
+from django.utils.translation import gettext_lazy
 from django_enumfield import enum
 
 
@@ -120,8 +120,8 @@ class Animals(enum.Enum):
     SHARK = 3
 
     __labels__ = {
-        CAT: ugettext_lazy("Cat"),
-        DOG: ugettext_lazy("Dog"),
+        CAT: gettext_lazy("Cat"),
+        DOG: gettext_lazy("Dog"),
     }
 
 

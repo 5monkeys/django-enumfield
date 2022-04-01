@@ -4,8 +4,8 @@ from typing import Any, Callable  # noqa: F401
 
 from django import forms
 from django.db import models
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext
+from django.utils.encoding import force_str
+from django.utils.translation import gettext
 
 from django_enumfield.exceptions import InvalidStatusOperationError
 from django_enumfield.forms.fields import EnumChoiceField
@@ -64,7 +64,7 @@ class EnumField(models.IntegerField):
         value = getattr(cls, self.attname)
         if value is None:
             return value
-        return force_text(value.label, strings_only=True)
+        return force_str(value.label, strings_only=True)
 
     def get_prep_value(self, value):
         value = super(EnumField, self).get_prep_value(value)
@@ -117,7 +117,7 @@ class EnumField(models.IntegerField):
                     new_value = enum(new_value)
                 except ValueError:
                     raise InvalidStatusOperationError(
-                        ugettext(
+                        gettext(
                             "{value!r} is not one of the available choices "
                             "for enum {enum}."
                         ).format(value=new_value, enum=enum)

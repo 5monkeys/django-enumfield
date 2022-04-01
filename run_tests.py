@@ -47,6 +47,7 @@ def main():
         # Dynamically configure the Django settings with the minimum necessary to
         # get Django running tests
         settings.configure(
+            SECRET_KEY="secret",
             INSTALLED_APPS=[
                 "django.contrib.auth",
                 "django.contrib.contenttypes",
