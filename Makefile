@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	python setup.py test
+	pytest $(test)
 
 .PHONY: flake8
 flake8:
@@ -12,15 +12,15 @@ mypy:
 
 .PHONY: isort
 isort:
-	isort -rc django_enumfield run_tests.py setup.py
+	isort -rc django_enumfield setup.py
 
 .PHONY: black
 black:
-	black django_enumfield run_tests.py setup.py
+	black django_enumfield setup.py
 
 .PHONY: black-check
 black-check:
-	black --check django_enumfield run_tests.py setup.py
+	black --check django_enumfield setup.py
 
 .PHONY: checks
 checks: mypy flake8 black-check
@@ -35,10 +35,6 @@ install:
 .PHONY: develop
 develop:
 	python setup.py develop
-
-.PHONY: coverage
-coverage:
-	coverage run --include=django_enumfield/* setup.py test
 
 .PHONY: clean
 clean:

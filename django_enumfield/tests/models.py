@@ -5,6 +5,12 @@ from django_enumfield.db.fields import EnumField
 from django_enumfield.enum import Enum
 
 
+class BaseModel(models.Model):
+    class Meta:
+        app_label = "tests"
+        abstract = True
+
+
 class LampState(Enum):
     OFF = 0
     ON = 1
@@ -12,7 +18,7 @@ class LampState(Enum):
     __default__ = OFF
 
 
-class Lamp(models.Model):
+class Lamp(BaseModel):
     state = EnumField(LampState, verbose_name="stately_state")
 
 
@@ -41,7 +47,7 @@ class PersonStatusDefault(Enum):
     __default__ = UNBORN
 
 
-class Person(models.Model):
+class Person(BaseModel):
     example = models.CharField(max_length=100, default="foo")
     status = EnumField(PersonStatus, default=PersonStatus.ALIVE)
 
@@ -78,7 +84,7 @@ def get_default_beer_label():
     return LabelBeer.JUPILER
 
 
-class Beer(models.Model):
+class Beer(BaseModel):
     style = EnumField(BeerStyle)
     state = EnumField(BeerState, null=True, blank=True)
     label = EnumField(LabelBeer, default=get_default_beer_label)
