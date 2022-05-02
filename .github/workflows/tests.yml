@@ -28,6 +28,8 @@ jobs:
             tox_env: py38-django31
           - python: "3.8"
             tox_env: py38-django32
+          - python: "3.8"
+            tox_env: py38-django40
           - python: "3.9"
             tox_env: py39-django22
           - python: "3.9"
@@ -36,8 +38,12 @@ jobs:
             tox_env: py39-django31
           - python: "3.9"
             tox_env: py39-django32
+          - python: "3.9"
+            tox_env: py39-django40
           - python: "3.10"
             tox_env: py310-django32
+          - python: "3.10"
+            tox_env: py310-django40
           - python: "3.7"
             tox_env: checks
     name: ${{ matrix.tox_env }}
