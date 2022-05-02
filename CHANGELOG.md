@@ -8,6 +8,7 @@
 - Dropped support for Django < 2.2
 - Added support for Django 3.2
 - Added support for Python 3.10
+- Added support for Django 4.0
 
 ## [2.0.2]
 
