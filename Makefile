@@ -42,9 +42,18 @@ coverage:
 
 .PHONY: clean
 clean:
-	rm -rf .tox/ dist/ *.egg *.egg-info .coverage* .eggs
+	rm -rf build dist .tox/ *.egg *.egg-info .coverage* .eggs
+	find . -name *.pyc -type f -delete
+	find . -name __pycache__ -type d -delete
 
-.PHONY: publish
-publish: clean
+.PHONY: build
+build: clean
+	python -m pip install --upgrade pip
+	python -m pip install --upgrade wheel
 	python setup.py sdist bdist_wheel
+
+.PHONY: release
+release: build
+	python -m pip install --upgrade twine
+	python -m twine check dist/*
 	python -m twine upload dist/*

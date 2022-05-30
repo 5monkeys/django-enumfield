@@ -1,5 +1,8 @@
+graft django_enumfield
+graft docs
 include AUTHORS
+include CHANGELOG.md
 include LICENSE
 include README.md
 include run_tests.py
-include django_enumfield/py.typed
+global-exclude *.py[cod] __pycache__ *.so
