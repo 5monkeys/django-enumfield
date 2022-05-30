@@ -1,7 +1,8 @@
 # Changelog
 
-
 ## [unreleased]
+
+## [3.0.0]
 
 - Move CI to GitHub Actions
 - Dropped support for Python < 3.7

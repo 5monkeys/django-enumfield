@@ -19,7 +19,8 @@ try:
         return _partialmethod(method)
 
 except ImportError:  # pragma: no cover
-    from django.utils.functional import curry
+    # This path can be dropped after support for Django 2.2 has been removed.
+    from django.utils.functional import curry  # type: ignore[attr-defined]
 
     def partialishmethod(method):
         return curry(method)
