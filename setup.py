@@ -3,6 +3,7 @@ import sys
 from distutils.command.install import INSTALL_SCHEMES
 from distutils.command.install_data import install_data
 from io import open
+from pathlib import Path
 
 try:
     from setuptools import setup
@@ -51,7 +52,10 @@ for dirpath, dirnames, filenames in os.walk(enum_dir):
     elif filenames:
         data_files.append([dirpath, [os.path.join(dirpath, f) for f in filenames]])
 
-version = __import__("django_enumfield").__version__
+root_init = Path(__file__).resolve().parent / "django_enumfield" / "__init__.py"
+init_globals = {}
+exec(root_init.read_text(), init_globals)
+version = init_globals["__version__"]
 
 with open(os.path.join(root_dir, "README.md"), encoding="utf-8") as f:
     description = f.read()
@@ -91,17 +95,24 @@ setup(
     data_files=data_files,
     packages=packages,
     include_package_data=True,
-    tests_require=[
-        "Django",
-        "djangorestframework",
-    ],
+    install_requires=["Django>=2.2"],
+    python_requires=">=3.7",
     zip_safe=False,
-    test_suite="run_tests.main",
     extras_require={
+        "test": [
+            "djangorestframework",
+            "pytest",
+            "pytest-cov",
+            "pytest-django",
+        ],
         "dev": [
+            "Django",
+            "djangorestframework",
+            "pytest",
+            "pytest-cov",
+            "pytest-django",
             "black",
             "isort",
-            "Django",
             "mypy",
             "django-stubs",
             "djangorestframework-stubs",

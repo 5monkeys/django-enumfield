@@ -1,8 +1,9 @@
 from __future__ import absolute_import
 
-import logging
 import enum
-from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Union, cast, Mapping
+import logging
+from typing import Any, List, Mapping, Optional, Sequence, Tuple, TypeVar, Union, cast
+
 from django.utils.encoding import force_str
 
 try:
