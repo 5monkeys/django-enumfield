@@ -12,7 +12,7 @@ Provides an enumeration Django model field (using `IntegerField`) with reusable 
 Installation
 ------------
 
-Currently, [we test](https://github.com/5monkeys/django-enumfield/actions) Django versions 2.2-4.0 and Python versions 3.7-3.10.
+Currently, [we test](https://github.com/5monkeys/django-enumfield/actions) Django versions 2.2-4.1 and Python versions 3.7-3.11.
 
 Install `django-enumfield` in your Python environment:
 
