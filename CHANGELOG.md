@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+## [3.1.0]
+
+- Support Python 3.11 and Django 4.1 (by [@vitaliyf](https://github.com/vitaliyf))
+
 ## [3.0.0]
 
 - Move CI to GitHub Actions
