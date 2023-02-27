@@ -15,19 +15,22 @@ from .. import validators
 try:
     from functools import partialmethod as _partialmethod
 
-    def partialishmethod(method):
-        return _partialmethod(method)
+    class partialishmethod(_partialmethod):
+        """Workaround for https://github.com/python/cpython/issues/99152"""
+
+        def __get__(self, obj, cls=None):
+            return self._make_unbound_method().__get__(obj, cls)
 
 except ImportError:  # pragma: no cover
     # This path can be dropped after support for Django 2.2 has been removed.
     from django.utils.functional import curry  # type: ignore[attr-defined]
 
-    def partialishmethod(method):
+    def partialishmethod(method):  # type: ignore[no-redef]
         return curry(method)
 
 
 class EnumField(models.IntegerField):
-    """EnumField is a convenience field to automatically handle validation of transitions
+    """EnumField is a convenience field to automatically handle validation of transition
     between Enum values and set field choices from the enum.
     EnumField(MyEnum, default=MyEnum.INITIAL)
     """

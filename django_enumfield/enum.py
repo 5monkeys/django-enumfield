@@ -2,8 +2,22 @@ from __future__ import absolute_import
 
 import logging
 import enum
-from typing import Any, List, Optional, Sequence, Tuple, TypeVar, Union, cast, Mapping
+from typing import (
+    Any,
+    List,
+    Optional,
+    Sequence,
+    Tuple,
+    TypeVar,
+    Union,
+    cast,
+    Mapping,
+    TYPE_CHECKING,
+)
 from django.utils.encoding import force_str
+
+if TYPE_CHECKING:
+    from django.utils.functional import _StrOrPromise as StrOrPromise
 
 try:
     from django.utils.functional import classproperty  # type: ignore
@@ -47,7 +61,7 @@ T = TypeVar("T", bound="Enum")
 class Enum(enum.IntEnum):
     """A container for holding and restoring enum values"""
 
-    __labels__ = {}  # type: Mapping[int, str]
+    __labels__ = {}  # type: Mapping[int, StrOrPromise]
     __default__ = None  # type: Optional[int]
     __transitions__ = {}  # type: Mapping[int, Sequence[int]]
 
