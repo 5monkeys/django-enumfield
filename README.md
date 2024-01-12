@@ -195,6 +195,42 @@ class PersonForm(forms.Form):
 Rendering `PersonForm` in a template will generate a select-box with "Male" and "Female" as option labels for the gender field.
 
 
+### Django Rest Framework
+`contrib.drf.NamedEnumField` and `contrib.drf.EnumField` classes are provided as serializer fields for the rest framework.
+
+```python
+from django.db import models
+from django_enumfield import enum
+from django_enumfield.contrib import drf
+from rest_framework import serializers
+
+
+class DeliveryStatus(enum.Enum):
+    NEW = 1
+    IN_PROGRESS = 2
+    COMPLETE = 3
+
+
+class Parcel(models.Model):
+    status = enum.EnumField(DeliveryStatus)
+
+
+class ParcelSerializer(serializers.ModelSerializer):
+    name = drf.NamedEnumField(DeliveryStatus, default=DeliveryStatus.NEW)
+    value = drf.EnumField(DeliveryStatus, default=DeliveryStatus.COMPLETE)
+
+    class Meta:
+        model = Parcel
+        fields = ('name', 'value')
+
+# The returned json will be
+{
+    'named': 'NEW',
+    'value': 3
+}
+```
+
+
 Local Development Environment
 -----------------------------
 
